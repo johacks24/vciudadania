@@ -1,0 +1,28 @@
+# Secretos y credenciales
+.env
+.env.*
+!.env.example
+
+# Datos generados / temporales (siempre regenerables con make ingesta)
+data/
+
+# Referencias privadas (originales de terceros; lo nuestro es indice.md y los destilados)
+docs/referencias/_privado/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# Sistema operativo / editores
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.tmp
+*.log

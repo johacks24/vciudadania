@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Modelo por defecto para este proyecto.
+  // La config global (~/.config/opencode/opencode.jsonc) solo permite OpenRouter.
+  "model": "openrouter/z-ai/glm-5.3",
+
+  // Endurecimiento opcional específico de este proyecto (datos de votación sensibles).
+  // Descomenta para bloquear toda salida a internet desde este repo.
+  // Nota: esto solo puede AÑADIR restricciones; nunca relajar las globales.
+  // "policies": [
+  //   { "action": "tool.use", "resource": "webfetch:*", "effect": "deny" },
+  //   { "action": "websearch.use", "resource": "*", "effect": "deny" }
+  // ]
+}
