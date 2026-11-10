@@ -4,10 +4,10 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 ## Scope A — Auditoría de base
 
-- [ ] A.1 Evaluar CongresoAbierto, civis-api y Reforma Digital con el checklist fijo
+- [x] A.1 Evaluar CongresoAbierto, civis-api y Reforma Digital con el checklist fijo
       (licencia, actividad, cobertura XV, calidad, API, comunidad) — timebox 2 h por
       candidato → notas en `notas-auditoria.md`
-- [ ] A.2 ADR-0005 «sobre qué construir» con el carril elegido
+- [x] A.2 ADR-0005 «sobre qué construir» con el carril elegido
 
 ## Scope B — Esqueleto del repo
 

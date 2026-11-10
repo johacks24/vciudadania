@@ -22,5 +22,8 @@
 
 ## Auditoría de base (scope A)
 
-Ver `notas-auditoria.md` (se genera con la auditoría) → decisión en
-`docs/decisiones/0005-sobre-que-construir.md`.
+Hecha el 10/11/2026 → `notas-auditoria.md` (metodología, checklist a–g por candidato,
+verificación cruzada 3/3). Decisión en `docs/decisiones/0005-sobre-que-construir.md`:
+fuente primaria propia + contribución a CongresoAbierto (civis-api y Reforma Digital,
+descartados con evidencia). Contraste cruzado adicional hecho en el spike: 21/21
+votaciones de la sesión 202 coinciden entre el CSV de CongresoAbierto y el JSON oficial.
