@@ -5,9 +5,10 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 ## Estado vivo
 
 - **En exploración:** ninguna
-- **En construcción:** D.2. Orden del día: Pages activada (Settings → Pages →
-  Source: GitHub Actions), push del workflow y verificación de la URL pública. B.6 y
-  D.3 completadas el 11/11. Desbloqueos y hallazgos del 11/11: `notas.md`
+- **En construcción:** ninguna. Lote 00 cerrado el 11/11/2026: cadena completa
+  validada, ficha pública en `https://johacks24.github.io/vciudadania/` y apuesta a
+  producción en `docs/apuestas.md`. Siguiente: moldear «Pleno XV navegable» (cooldown:
+  revisar `docs/aprender.md` y `docs/apuestas.md`)
 
 ## Scope A — Auditoría de base
 
@@ -46,15 +47,12 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 - [x] D.1 Generador de ficha (web/index.html) desde los datos validados: los 5 pasos del
       recorrido, sin colores de partido, con fuente enlazada
-- [ ] D.2 Despliegue público en GitHub Pages — *bloqueo resuelto el 11/11 (repo público:
-      `github.com/johacks24/vciudadania`). Día 12/11: (1) Settings → Pages → Source:
-      GitHub Actions (se activa antes del primer despliegue); (2) crear
-      `.github/workflows/paginas.yml` que publique `web/` (checkout → configure-pages →
-      upload-pages-artifact con `path: web` → deploy-pages; disparo: push a main que
-      toque `web/**` + manual); (3) push y verificar: workflow «Paginas» en verde y URL
-      `https://johacks24.github.io/vciudadania/` con los 5 pasos del recorrido; (4)
-      cerrar: apuesta a **producción** en `docs/apuestas.md`. Decisión y alternativas:
-      `docs/decisiones/0006-despliegue.md`. Ejecutar D.3 antes del push final*
+- [x] D.2 Despliegue público en GitHub Pages — *hecha el 11/11: Pages activada
+      (Source: GitHub Actions), workflow «Paginas» creado y empujado, y despliegue
+      verificado: `https://johacks24.github.io/vciudadania/` (HTTP 200) con las 21
+      votaciones, los 5 pasos del recorrido y 21 enlaces de fuente. Workflows
+      «Paginas» y CI en verde. La apuesta pasa a **producción** en `docs/apuestas.md`.
+      Decisión y alternativas: `docs/decisiones/0006-despliegue.md`*
 - [x] D.3 Enlace al repo en la ficha — *hecho el 11/11: el pie de la ficha enlaza el
       método en el repo real
       (`github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md`, la opción

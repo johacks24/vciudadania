@@ -13,7 +13,7 @@ sitio). La **descripción** dice qué es la apuesta (estable; se escribe al mold
 
 | Apuesta | Descripción | Estado | Carpeta |
 |---|---|---|---|
-| Fundamentos y spike | Cadena completa validada (Congreso → ingesta → validación 100 % → datos → ficha pública) + decisiones de base | desarrollo | 20261110_fundamentos-y-spike |
+| Fundamentos y spike | Cadena completa validada (Congreso → ingesta → validación 100 % → datos → ficha pública) + decisiones de base | producción | 20261110_fundamentos-y-spike |
 | Pleno XV navegable | Toda la legislatura XV con búsqueda, fichas y voto por grupo | investigación | 20261110_pleno-xv-navegable |
 | API pública v1 | Datasets estáticos (JSON + CSV) documentados, con citas y método de reutilización | consideración | — |
 | Resúmenes trazables | Resumen de cada iniciativa por frase citada (extract → redact → verify) + golden set | consideración | — |

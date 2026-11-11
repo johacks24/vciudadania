@@ -1,6 +1,6 @@
 # Lote 00 — Fundamentos + spike vertical
 
-**Fechas:** 10/11/2026 → · **Tamaño:** ~1 semana · Estado vivo en `docs/apuestas.md`
+**Fechas:** 10/11/2026 → 11/11/2026 · **Tamaño:** ~1 semana · Estado vivo en `docs/apuestas.md`
 
 ## Problema
 

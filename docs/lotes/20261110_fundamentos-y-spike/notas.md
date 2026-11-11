@@ -56,8 +56,8 @@ votaciones de la sesión 202 coinciden entre el CSV de CongresoAbierto y el JSON
   `github.com/johacks24/vciudadania`. ADR-0006 ya preveía ajustar el enlace al fijar
   la URL.
 - **Programado para el 12/11/2026:** B.6 · D.3 · D.2 (Pages en modo GitHub Actions; al
-  cerrar D.2, la apuesta pasa a **producción** en `docs/apuestas.md`). B.6 adelantada y
-  completada el 11/11 (abajo); D.3 y D.2 siguen el mismo día.
+  cerrar D.2, la apuesta pasa a **producción** en `docs/apuestas.md`). Las tres
+  adelantadas y completadas el 11/11 (abajo).
 
 ## B.6 completada: credencial propia del proyecto (11/11/2026)
 
@@ -85,3 +85,19 @@ votaciones de la sesión 202 coinciden entre el CSV de CongresoAbierto y el JSON
      `git credential fill` → `username=johacks24`.
 - Con la credencial propia en el llavero, los pushes ya no consultan el `GIT_ASKPASS`
   del editor (solo entraría en juego si el llavero no respondiera).
+
+## D.2 completada: ficha pública en GitHub Pages (11/11/2026)
+
+- **URL pública:** `https://johacks24.github.io/vciudadania/` — verificada: HTTP 200,
+  21 votaciones, 20 tablas por grupo, 1 nota de «votación no nominal» (suplicatorio),
+  21 enlaces «Fuente oficial» y el enlace al método corregido (D.3).
+- **Workflows en verde:** «Paginas» (completed/success) y CI (completed/success).
+- **Hueco encontrado en el token fino:** el push del workflow fue rechazado
+  («refusing to allow a Personal Access Token to create or update workflow … without
+  `workflow` scope»): el permiso Contents RW no basta para crear workflows. Resuelto
+  añadiendo **Workflows: Read and write** al token en
+  github.com/settings/personal-access-tokens. **El token del proyecto necesita
+  Contents RW + Workflows RW.** Editar los permisos no cambia el valor del token: el
+  llavero no se tocó.
+- Reparto del día: activar Pages y los permisos del token, el humano (en GitHub);
+  código, workflow, push y verificación, el agente.
