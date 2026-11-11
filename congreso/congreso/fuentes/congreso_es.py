@@ -1,6 +1,6 @@
 """Cliente de la fuente primaria: datos abiertos del Congreso de los Diputados.
 
-Notas verificadas (docs/lotes/00/notas.md):
+Notas verificadas (docs/lotes/20261110_fundamentos-y-spike/notas.md):
 - La página de opendata bloquea peticiones sin user-agent de navegador (403).
 - La página ?targetDate=DD/MM/YYYY&targetLegislatura=XV lista los JSON de la sesión.
 """

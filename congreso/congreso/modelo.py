@@ -1,7 +1,7 @@
 """Modelo de datos (pydantic). El esquema se define ANTES del código (regla del proyecto).
 
 Origen del esquema: JSON oficial por votación del opendata del Congreso,
-verificado el 10/11/2026 (ver docs/lotes/00/notas.md).
+verificado el 10/11/2026 (ver docs/lotes/20261110_fundamentos-y-spike/notas.md).
 """
 
 from __future__ import annotations

@@ -6,7 +6,7 @@ este índice y los destilados que hagamos.
 
 | Referencia | Origen local | Principio que sacamos |
 |---|---|---|
-| *Shape Up* (Ryan Singer, Basecamp) — lectura gratuita en shapeup.com | `_privado/shape-up/` (transcripción MD por capítulos) | Moldear antes de construir: pitch con problema, apuesta, no-objetivos, conejos; lotes con "cuándo está hecho"; hills; cooldown |
+| *Shape Up* (Ryan Singer, Basecamp) — lectura gratuita en shapeup.com | `_privado/shape-up/` (transcripción MD por capítulos) | Moldear antes de construir: pitch con problema, apuesta, no-objetivos, riesgos de desvío; "cuándo está hecho"; tareas por resolver/resueltas; cooldown |
 | *Here's how I use LLMs to help me write code* + notas sobre codebases para agentes (Simon Willison) | — (web) | Tests que el agente pueda ejecutar; notas de arranque del dev server; errores con detalle; "no commiteo lo que no puedo explicar" |
 | *My LLM codegen workflow atm* (Harper Reed) | — (web) | Bucles discretos: brief → plan → ejecutar; ficheros como memoria entre sesiones (plan.md/tareas.md) |
 | *My AI Adoption Journey* (Mitchell Hashimoto) | — (web) | Harness engineering: cuando el agente falla, añadir una regla o una herramienta; revisión final "¿se me olvidó algo?" |
@@ -15,7 +15,18 @@ este índice y los destilados que hagamos.
 | Guías anti-sobrecarga de Karpathy (Simplicity First, Surgical Changes, criterios verificables) | — (web) | Nada especulativo; cada línea trazable a la tarea; criterios de éxito verificables |
 | *Plurality* y la práctica g0v/"fork the government" (Audrey Tang) | — (web) | Open by default; open data/API como infraestructura pública; transparencia radical del método y las correcciones |
 | Es la hora de la verdad (eslahoradelaverdad.es) — referencia de producto y método | — (web) | Benchmark de producto; sus reglas de resumen y neutralidad (CC BY 4.0, citable) |
-| CongresoAbierto (congresoabierto.org, MIT) · civis-api · API Reforma Digital | — (web) | Candidatos de la auditoría de base (ADR-0005) |
+| CongresoAbierto (congresoabierto.org) · civis-api · API Reforma Digital | `informe-auditoria` del lote de fundamentos | Candidatos de la auditoría de base (ADR-0005: fuente primaria propia + contribución a CongresoAbierto) |
+| holapolitica.org (EUPL) | `informe-ecosistema-votaciones` | Plataforma cívica mantenible por una sola persona: ingesta idempotente, multicámara, quiz — análisis profundo pendiente |
+| quevotan.eu (AGPL, CodeFloe/Forgejo) | `informe-ecosistema-votaciones` | Sitio estático + «qué significa votar sí/no»; el precedente de Codeberg en producción |
+| votoenclaro.es (datos CC BY-NC) | `informe-ecosistema-votaciones` | El verificador determinista: una pregunta solo se publica si cada cita aparece literal en el documento oficial |
+| quienvota.org | `informe-ecosistema-votaciones` | Huella SHA-256 por fichero oficial + fecha de consulta: copiar para `sources.yaml` |
+| Boreal (boreal.es) | `informe-ecosistema-votaciones` | La ILP como canal legal de retorno (merge back): firmas → admisión → Pleno |
+| Polis (compdemocracy.org, AGPL) | `informe-ecosistema-votaciones` | Consenso sin botón de respuesta; argumentos-puente; vTaiwan: 80 % de temas → acción legislativa |
+| DemocracyOS / Leyes Abiertas (GPL-3) | `informe-ecosistema-votaciones` | Co-redacción de normas con versiones y colaboradores acreditados |
+| Decidim (AGPL) · Consul (AGPL) | `informe-ecosistema-votaciones` | Participación institucional en España: integrar, no reinventar |
+| Gobierto (Populate, AGPL) | `informe-ecosistema-votaciones` | Fase ayuntamientos: infraestructura municipal existente |
+| e-cidadania (Apache 2.0, abandonada ~2013) | `informe-ecosistema-votaciones` | Los proyectos mueren sin mantenimiento: por eso lotes estrechos y base estable |
+| unitedstates/congress (CC0) | `informe-ecosistema-votaciones` | El estándar de recolector comunitario: modelo para la API pública v1 |
 
 ## Reglas de esta carpeta
 

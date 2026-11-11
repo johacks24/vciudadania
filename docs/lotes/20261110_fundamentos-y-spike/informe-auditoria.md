@@ -120,6 +120,6 @@ Justificación: (1) es el único candidato vivo, con commit de 2026-10-11, CI y 
 
 - **Dependencia de una persona**: CongresoAbierto depende casi al 100% de MarcoAnarmo y tiene 1 mes de vida pública. Mitigación: consumir sus datos/JSON como fuente derivada (CC BY 4.0) sin acoplarnos a su infraestructura, y si el proyecto se estanca, nuestro pipeline puede regenerar los mismos artefactos desde el opendata oficial (la ruta está documentada en su propio `docs/metodologia.md`).
 - **Su ingesta de votaciones es semimanual**: si nadie automatiza la descarga diaria, puede quedar desfasado; contribuir eso es prioritario y además prueba del carril 1.
-- **Solo Pleno**: las comisiones no están ingestadas; si Revisora necesita comisiones, habrá que contribuir o extenderlo por nuestra cuenta.
+- **Solo Pleno**: las comisiones no están ingestadas; si vCiudadania necesita comisiones, habrá que contribuir o extenderlo por nuestra cuenta.
 - **CSV público de votaciones sin voto nominal**: el voto por diputado está en los JSON del repo y la web, no en el CSV; para nuestra trazabilidad conviene consumir `data/congreso/votaciones.json`/`pleno.jsonl` del repo y validar contra el JSON oficial, como ya hacemos.
 - **Reforma Digital**: si en el futuro publica una API realmente accesible (sin checkpoint Vercel) y con licencia, podría reevaluarse como fuente secundaria; hoy, descartado.

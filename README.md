@@ -1,16 +1,22 @@
-# Revisora Legislativa
+# vCiudadania
 
-Trazabilidad de las votaciones del Congreso de los Diputados (España), para votar con
-más información y luchar contra la polarización. Proyecto cívico, independiente, sin
-publicidad y sin recomendación de voto.
+**La versión ciudadana de las decisiones públicas.** Trazabilidad de las votaciones del
+Congreso de los Diputados (España), para votar con más información y luchar contra la
+polarización. Cívico, independiente, sin publicidad y sin recomendación de voto.
+
+La «v» es de **versión**, como en `doc_v0, doc_v1, doc_vN`: vParlamento frente a
+vCiudadania — el homenaje a g0v («fork the government») y a su «versión del pueblo» de
+la web oficial. Nace en el Congreso y no lleva el nombre de ninguna institución: está
+pensado para extenderse a parlamentos autonómicos y ayuntamientos, y para que algún día
+la ciudadanía co-redacte normas con canal de retorno real (vTaiwan, Leyes Abiertas, ILP).
 
 **Principios:** fuentes primarias siempre citadas · open by default · simplicidad ·
 neutralidad (decimos qué se votó y quién votó qué; la valoración es tuya).
 
 ## Estado
 
-Lote 00 en curso: cadena completa andando (Congreso → validación → base de datos →
-ficha web pública). Ver `docs/apuestas.md`.
+Apuesta en desarrollo: cadena completa validada (Congreso → validación 100 % → datos →
+ficha pública). Tablero: `docs/apuestas.md`. Lotes: `docs/lotes/`.
 
 ## Arranque
 
@@ -26,8 +32,8 @@ make test       # suite de tests
 ## Estructura
 
 - `congreso/` — paquete Python (fuentes, modelo, exportación, tests). La unidad open source.
-- `web/` — la webapp (fichas +, más adelante, el juego de coincidencias).
-- `docs/` — el método público, las decisiones (ADR) y los lotes de trabajo.
+- `web/` — la webapp (fichas y, más adelante, el juego de coincidencias).
+- `docs/` — el método público, las decisiones (ADR), las referencias y las apuestas con sus lotes.
 - `data/` — generada, no versionada. `data/raw/` inmutable.
 
 ## Licencias
@@ -40,5 +46,4 @@ make test       # suite de tests
 
 ## Cómo citar
 
-> Revisora Legislativa (repositorio: revisora_legislativa), a partir de los datos abiertos
-> del Congreso de los Diputados.
+> vCiudadania (vciudadania), a partir de los datos abiertos del Congreso de los Diputados.

@@ -44,19 +44,19 @@ PLANTILLA = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Revisora Legislativa — Votaciones del Pleno</title>
+<title>vCiudadania — Votaciones del Pleno</title>
 <style>{css}</style>
 </head>
 <body>
 <main>
-<h1>Revisora Legislativa</h1>
+<h1>vCiudadania</h1>
 <p class="lead">Sesión {sesion} del Pleno · {fecha_legible} · Legislatura {legislatura}
 · {n} votaciones · recuentos validados contra los totales oficiales</p>
 {tarjetas}
 <footer>
-<p>Fuente: Revisora Legislativa, a partir de los <a href="https://www.congreso.es/es/opendata">datos abiertos
+<p>Fuente: vCiudadania (vciudadania), a partir de los <a href="https://www.congreso.es/es/opendata">datos abiertos
 del Congreso de los Diputados</a>. Cada votación enlaza su registro oficial. La valoración es tuya:
-no recomendamos el voto. Método y límites: <a href="https://github.com/">docs/metodo/metodo.md</a>.</p>
+no recomendamos el voto. Método y límites: <a href="https://github.com/vciudadania">docs/metodo/metodo.md</a>.</p>
 </footer>
 </main>
 </body>

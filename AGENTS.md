@@ -1,12 +1,17 @@
 # AGENTS.md — reglas del proyecto
 
-Proyecto: **Revisora Legislativa** — trazabilidad de votaciones del Congreso de los
-Diputados (España). Cívico, independiente, sin recomendación de voto.
+Proyecto: **vCiudadania** — la versión ciudadana de las decisiones públicas (la «v» es
+de versión: vParlamento frente a vCiudadania). Trazabilidad de votaciones del Congreso
+de los Diputados (España). Cívico, independiente, sin recomendación de voto.
 
 ## Idioma y estilo
 
 - Todo en **castellano**. No hay i18n (decisión registrada en docs/decisiones).
 - Explicaciones: primero qué es, luego para qué sirve aquí, luego el comando exacto.
+- **Sin calcos forzados:** concepto explícito en castellano, o término en inglés entre
+  paréntesis. Prohibidos: «colina», «conejos», «piteado». Estados de tarea:
+  **En exploración / En construcción**. Estados de apuesta: **consideración /
+  investigación / desarrollo / producción**.
 
 ## Comandos (hacer, no improvisar)
 
@@ -18,9 +23,20 @@ Si un comando falla, no inventes variantes: lee el error, arregla la causa.
 - `congreso/` — paquete Python: `fuentes/` (clientes de congreso.es y BOE), `modelo.py`
   (esquemas pydantic), `exportar_sqlite.py`, `exportar_ficha.py`, `cli.py`, `tests/`.
 - `web/` — la webapp (la ficha se GENERA con `make exportar`; no edites `web/index.html` a mano).
-- `docs/` — `apuestas.md` (tablero), `lotes/<NN>/` (plan.md + tareas.md + notas.md),
-  `decisiones/` (ADR), `metodo/` (público), `referencias/` (indice.md público;
-  `_privado/` con originales de terceros, no versionado).
+- `docs/` — `apuestas.md` (índice de apuestas: ÚNICA fuente de verdad de los estados),
+  `lotes/` (una carpeta por apuesta: plan.md + tareas.md + notas.md + `informe-<tema>.md`;
+  plantilla canónica en `lotes/_plantilla.md`), `decisiones/` (ADR), `metodo/` (público),
+  `referencias/` (indice.md público; `_privado/` con originales de terceros, no versionado).
+
+### Convenciones de docs (lecciones de moldeo del 10-11/11/2026)
+
+- Carpetas de apuesta: `yymmdd_<nombre-corto>`. La fecha es la de apertura y no cambia
+  nunca. Referencias cruzadas por **nombre corto**, nunca por número o fecha.
+- El estado de una apuesta vive **solo** en `docs/apuestas.md`. En `plan.md`: fechas y
+  tamaño, no estado. Descripción del índice = qué es (estable), no progreso.
+- Nada de una plantilla se omite sin declararlo («No aplica» + porqué).
+- Evidencias largas del lote → `informe-<tema>.md`; `notas.md` es el diario del lote.
+- Plantilla de apuesta obligatoria: nueva carpeta se crea copiando `lotes/_plantilla.md`.
 - `data/` — generada, nunca versionada. `data/raw/` es inmutable: no editar lo descargado.
 
 ## Fuentes y trazabilidad (innegociable)
@@ -76,3 +92,15 @@ operativa para el agente, no como nota para el humano. El aprendizaje del proyec
   «No vota»). **Regla: catalogar los valores reales observados en los datos ANTES de
   escribir reglas de validación**; si aparece un valor no catalogado, mirar su
   distribución real antes de asumir que es un error del dato.
+- 2026-11-11 (4x4 nº 2, revisión del lote): la plantilla de lote se escribió «de
+  memoria» y se omitió la sección de estados de tarea sin declararlo. **Regla: toda
+  apuesta nueva se crea copiando `docs/lotes/_plantilla.md`; nada se omite sin
+  declararlo («No aplica» + porqué).**
+- 2026-11-11 (4x4 nº 3, revisión del lote): el lote 01 existía en dos sitios
+  (`apuestas.md` y `lotes/01/plan.md`) y las copias divergieron. **Regla: cada dato
+  vive en un único sitio** — el estado de las apuestas solo en `docs/apuestas.md`;
+  descripciones estables, nunca progreso duplicado.
+- 2026-11-11 (4x4 nº 4, lengua): se usaron calcos del inglés que en castellano no se
+  entienden («colina» por hillchart, «conejos» por rabbit holes, «piteado» por
+  pitch/ched). **Regla: concepto explícito en castellano o término en inglés entre
+  paréntesis; cuando haya duda de traducción, se deja en inglés.**

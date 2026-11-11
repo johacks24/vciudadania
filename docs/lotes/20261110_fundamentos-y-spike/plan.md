@@ -1,6 +1,6 @@
 # Lote 00 — Fundamentos + spike vertical
 
-**Estado:** en curso · **Fechas:** 10/11/2026 → · **Tamaño:** ~1 semana
+**Fechas:** 10/11/2026 → · **Tamaño:** ~1 semana · Estado vivo en `docs/apuestas.md`
 
 ## Problema
 
@@ -19,7 +19,7 @@ documentada de sobre qué construir (auditoría).
 Web navegable con búsqueda · resúmenes con IA · juego · chat · comisiones · Senado ·
 XIV legislatura · API documentada para terceros.
 
-## Conejos (riesgos)
+## Riesgos de desvío (rabbit holes)
 
 1. **Bloqueos del Congreso** a clientes no-navegador (403 sin UA) — mitigado: UA de
    navegador verificado; si empeora, carril alternativo documentado en notas.
@@ -41,4 +41,4 @@ XIV legislatura · API documentada para terceros.
 - URL pública con la ficha cumpliendo los 5 pasos.
 - `make ingesta && make validar` cuadra al 100 % la sesión 202 (30/09/2026).
 - Repo con licencias, AGENTS.md, CI verde y ADR-0005 publicada.
-- `docs/apuestas.md` con el lote 01 piteado.
+- `docs/apuestas.md` con la apuesta «Pleno XV navegable» en investigación.

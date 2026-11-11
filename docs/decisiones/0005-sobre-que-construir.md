@@ -1,7 +1,7 @@
 # ADR-0005: Sobre qué construir — fuente primaria propia + contribución a CongresoAbierto
 
 **Fecha:** 2026-11-10 · **Estado:** aceptada
-**Evidencia completa:** `docs/lotes/00/notas-auditoria.md` (auditoría con checklist a–g,
+**Evidencia completa:** `docs/lotes/20261110_fundamentos-y-spike/informe-auditoria.md` (auditoría con checklist a–g,
 metodología y verificación cruzada)
 
 ## Contexto

@@ -2,17 +2,23 @@
 
 Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
+## Estado vivo
+
+- **En exploración:** ninguna
+- **En construcción:** B.5 (bloqueada: requiere push a GitHub) · D.2 (bloqueada:
+  requiere credenciales de despliegue — decisión en `docs/decisiones/0006-despliegue.md`)
+
 ## Scope A — Auditoría de base
 
 - [x] A.1 Evaluar CongresoAbierto, civis-api y Reforma Digital con el checklist fijo
       (licencia, actividad, cobertura XV, calidad, API, comunidad) — timebox 2 h por
-      candidato → notas en `notas-auditoria.md`
+      candidato → `informe-auditoria.md`
 - [x] A.2 ADR-0005 «sobre qué construir» con el carril elegido
 
 ## Scope B — Esqueleto del repo
 
 - [x] B.1 Licencias (AGPL-3.0 código + CC BY-SA contenidos), README, .gitignore,
-      .env.example, Makefile, opencode.json
+      .env.example, Makefile, opencode.jsonc
 - [x] B.2 AGENTS.md con regla 4x4, lecciones y reglas de fuentes
 - [x] B.3 docs/: apuestas.md, aprender.md, diseno.md, metodo/metodo.md, decisiones
       0001–0004, referencias/ (indice + _privado gitignored)
@@ -33,11 +39,13 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 - [x] D.1 Generador de ficha (web/index.html) desde los datos validados: los 5 pasos del
       recorrido, sin colores de partido, con fuente enlazada
-- [ ] D.2 Despliegue público (URL accesible) — *BLOQUEO: faltan credenciales del humano
-      (Vercel o GitHub Pages). Preparado: `make exportar` genera el sitio estático; el
-      despliegue es copiar `web/` o activar GitHub Pages tras el primer push.*
+- [ ] D.2 Despliegue público (URL accesible) — *BLOQUEO: faltan credenciales del humano.
+      Decisión y alternativas: `docs/decisiones/0006-despliegue.md` (GitHub Pages;
+      Vercel si la web pasa a Next.js; Codeberg Pages como opción menor). Preparado:
+      `make exportar` genera el sitio estático; el despliegue es activar Pages tras el
+      primer push.*
 
 ## Scope E — Cierre
 
-- [x] E.1 docs/apuestas.md con lote 01 piteado
+- [x] E.1 docs/apuestas.md con la apuesta «Pleno XV navegable» en investigación
 - [x] E.2 Commits limpios por scope (perfect commit: código + test + doc juntos)

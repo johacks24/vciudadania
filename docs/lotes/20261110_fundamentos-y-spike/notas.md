@@ -12,8 +12,8 @@
 - **Enumeración:** la página `congreso.es/es/opendata/votaciones?targetDate=30/09/2026&targetLegislatura=XV`
   lista los 21 JSON de la sesión 202 (requiere UA navegador; sin él, 403).
 - **Votación 010 (muestra):** 346 presentes, 34 Sí, 312 No, 0 Abst, 4 No votan; 350 votos
-  individuales; grupos: GP 137, GS 121, GSUMAR 26, GVOX 32, GMx 9, GR 7, GJxCAT 7,
-  GEH Bildu 6, GV (EAJ-PNV) 5.
+  individuales; **diputados por grupo** (no votos): GP 137, GS 121, GSUMAR 26, GVOX 32,
+  GMx 9, GR 7, GJxCAT 7, GEH Bildu 6, GV (EAJ-PNV) 5.
 - **Votación 021 (suplicatorio):** solo totales (340 Sí, 0, 0, 10 No votan) — voto
   secreto, sin individuales. Confirma la categoría «sin voto individual publicado».
 - **Índice de contraste:** `congresoabierto.org/datos/csv/votaciones.csv` (MIT) incluye
@@ -22,7 +22,7 @@
 
 ## Auditoría de base (scope A)
 
-Hecha el 10/11/2026 → `notas-auditoria.md` (metodología, checklist a–g por candidato,
+Hecha el 10/11/2026 → `informe-auditoria.md` (metodología, checklist a–g por candidato,
 verificación cruzada 3/3). Decisión en `docs/decisiones/0005-sobre-que-construir.md`:
 fuente primaria propia + contribución a CongresoAbierto (civis-api y Reforma Digital,
 descartados con evidencia). Contraste cruzado adicional hecho en el spike: 21/21

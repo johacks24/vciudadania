@@ -1,6 +1,8 @@
 # Lote 01 — Pleno XV navegable
 
-**Estado:** piteado — PENDIENTE DE MOLDEAR (rellenar este plan antes de construir)
+**Plan borrador aprobado como apuesta en investigación.** Al moldear se afina este plan
+y nacen `tareas.md` y `notas.md` (desde `_plantilla.md`). Estado vivo en `docs/apuestas.md`.
+**Tamaño estimado:** 2–3 semanas (a fijar al moldear).
 
 ## Problema
 
@@ -14,15 +16,18 @@ lote 00, buscador y ficha por votación, en producción.
 
 ## No-objetivos
 
-Resúmenes con IA (lote 03) · juego (04) · comisiones · Senado · XIV · API documentada (02).
+Resúmenes con IA (Resúmenes trazables) · juego (Juego de coincidencias) · comisiones ·
+Senado · XIV · API pública v1.
 
-## Conejos
+## Riesgos de desvío (rabbit holes)
 
 1. Tipos raros de votación (asentimiento, suplicatorios, votaciones por puntos) — regla:
    cubrir lo publicable; marcar explícitamente lo no publicable.
 2. **Color de los grupos parlamentarios:** eslahoradelaverdad lo evita por neutralidad.
-   Decidir con ADR propia (0006) dentro de este lote.
+   Decidir con ADR propia (0007) dentro de este lote.
 3. Identificadores estables de diputado (altas/bajas/cambios de grupo).
+4. **Análisis previo obligatorio:** holapolitica y quevotan (informe-ecosistema) antes
+   de fijar el alcance — pueden mover el diseño del buscador y de las afinidades.
 
 ## Recorridos de usuario
 

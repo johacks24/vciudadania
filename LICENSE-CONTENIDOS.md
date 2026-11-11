@@ -7,7 +7,7 @@ de datos y textos propios) se publican con licencia:
 https://creativecommons.org/licenses/by-sa/4.0/deed.es
 
 Puedes copiarlos, adaptarlos y reutilizarlos (también comercialmente) citando
-«Revisora Legislativa» y enlazando la página de origen. Si publicas algo derivado,
+«vCiudadania» y enlazando la página de origen. Si publicas algo derivado,
 debe llevar esta misma licencia (CompartirIgual).
 
 ## Quedan fuera de esta licencia
