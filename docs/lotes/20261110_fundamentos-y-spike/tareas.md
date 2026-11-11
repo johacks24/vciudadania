@@ -5,8 +5,10 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 ## Estado vivo
 
 - **En exploración:** ninguna
-- **En construcción:** B.5 (bloqueada: requiere push a GitHub) · D.2 (bloqueada:
-  requiere credenciales de despliegue — decisión en `docs/decisiones/0006-despliegue.md`)
+- **En construcción:** B.6 · D.2 · D.3 — programadas para el **12/11/2026**. Orden del
+  día: B.6 antes del primer push (la credencial nueva debe quedar en el llavero), D.3
+  antes del push final de D.2 (la ficha sube ya corregida). Desbloqueos y hallazgos del
+  11/11: `notas.md`
 
 ## Scope A — Auditoría de base
 
@@ -24,7 +26,13 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       0001–0004, referencias/ (indice + _privado gitignored)
 - [x] B.4 Plantilla de lote aplicada (este lote: plan + tareas + notas) y comandos
       /siguiente y /referencia
-- [ ] B.5 CI mínima verde (tests) — *workflow creado; «verde» requiere push a GitHub*
+- [x] B.5 CI mínima verde (tests) — *verde en el primer push (11/11/2026):
+      https://github.com/johacks24/vciudadania/actions/runs/42938522655*
+- [ ] B.6 Credencial git propia (token fino del humano) — *migrar del token OAuth
+      general del editor al token fino (fine-grained) ya creado (permiso de código RW):
+      reject + push desde un Terminal normal (usuario `johacks24`, el token como
+      contraseña) y verificar con `git credential fill` (username=johacks24, ya no
+      `90719580`). Runbook y cadena completa: `notas.md` 11/11 — día 12/11*
 
 ## Scope C — Spike de datos (el corazón)
 
@@ -39,11 +47,22 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 - [x] D.1 Generador de ficha (web/index.html) desde los datos validados: los 5 pasos del
       recorrido, sin colores de partido, con fuente enlazada
-- [ ] D.2 Despliegue público (URL accesible) — *BLOQUEO: faltan credenciales del humano.
-      Decisión y alternativas: `docs/decisiones/0006-despliegue.md` (GitHub Pages;
-      Vercel si la web pasa a Next.js; Codeberg Pages como opción menor). Preparado:
-      `make exportar` genera el sitio estático; el despliegue es activar Pages tras el
-      primer push.*
+- [ ] D.2 Despliegue público en GitHub Pages — *bloqueo resuelto el 11/11 (repo público:
+      `github.com/johacks24/vciudadania`). Día 12/11: (1) Settings → Pages → Source:
+      GitHub Actions (se activa antes del primer despliegue); (2) crear
+      `.github/workflows/paginas.yml` que publique `web/` (checkout → configure-pages →
+      upload-pages-artifact con `path: web` → deploy-pages; disparo: push a main que
+      toque `web/**` + manual); (3) push y verificar: workflow «Paginas» en verde y URL
+      `https://johacks24.github.io/vciudadania/` con los 5 pasos del recorrido; (4)
+      cerrar: apuesta a **producción** en `docs/apuestas.md`. Decisión y alternativas:
+      `docs/decisiones/0006-despliegue.md`. Ejecutar D.3 antes del push final*
+- [ ] D.3 Enlace al repo en la ficha — *la ficha generada enlaza
+      `github.com/vciudadania` (no existe). Corregir en el generador
+      (`congreso/congreso/exportar_ficha.py`, ~línea 59) a
+      `github.com/johacks24/vciudadania` — opción mejor: enlace directo al fichero
+      (`blob/main/docs/metodo/metodo.md`, que es lo que dice el texto del enlace) —,
+      regenerar con `make exportar` y validar. Consecuencia prevista en ADR-0006 —
+      día 12/11*
 
 ## Scope E — Cierre
 

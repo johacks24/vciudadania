@@ -27,3 +27,33 @@ verificación cruzada 3/3). Decisión en `docs/decisiones/0005-sobre-que-constru
 fuente primaria propia + contribución a CongresoAbierto (civis-api y Reforma Digital,
 descartados con evidencia). Contraste cruzado adicional hecho en el spike: 21/21
 votaciones de la sesión 202 coinciden entre el CSV de CongresoAbierto y el JSON oficial.
+
+## Publicación del repo y desbloqueos (11/11/2026)
+
+- **Repo público creado y empujado:** `github.com/johacks24/vciudadania` — 5
+  confirmaciones, rama por defecto `main`, visibilidad pública (verificado vía API).
+- **CI verde a la primera** → B.5 completa:
+  https://github.com/johacks24/vciudadania/actions/runs/42938522655
+- **Cadena de credenciales git (por qué el push no pidió token):** el terminal del
+  editor (VSCodium) inyecta su sesión de GitHub vía `GIT_ASKPASS`; git guardó ese token
+  en el llavero de macOS con usuario `90719580`, el ID numérico de la cuenta (verificado
+  contra la API). El fallo previo («Invalid username or token») era un token caducado
+  del mismo mecanismo, limpiado con `git credential reject`. El token fino
+  (fine-grained) creado por el humano (permiso de código RW) quedó sin usar; B.6 lo
+  adopta como credencial propia del proyecto.
+- **Runbook de B.6 (migración al token fino), todo desde un Terminal normal (no el del
+  editor, que inyecta su credencial):**
+  1. `printf 'protocol=https\nhost=github.com\n' | git credential reject` — borra la
+     credencial del editor del llavero.
+  2. `git push` — pedirá credenciales: usuario `johacks24`, contraseña = el token fino
+     (nunca la contraseña de la cuenta de GitHub).
+  3. Verificar: `printf 'protocol=https\nhost=github.com\n\n' | git credential fill`
+     debe devolver `username=johacks24` (ya no `90719580`).
+  Al ejecutar B.6: anotar aquí la fecha de caducidad del token (se consulta en
+  github.com/settings/personal-access-tokens).
+- **Hallazgo para D.3:** la ficha enlaza el repo como `github.com/vciudadania` (no
+  existe; vive en `congreso/congreso/exportar_ficha.py` ~línea 59); el real es
+  `github.com/johacks24/vciudadania`. ADR-0006 ya preveía ajustar el enlace al fijar
+  la URL.
+- **Programado para el 12/11/2026:** B.6 · D.3 · D.2 (Pages en modo GitHub Actions; al
+  cerrar D.2, la apuesta pasa a **producción** en `docs/apuestas.md`).
