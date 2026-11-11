@@ -101,3 +101,11 @@ votaciones de la sesión 202 coinciden entre el CSV de CongresoAbierto y el JSON
   llavero no se tocó.
 - Reparto del día: activar Pages y los permisos del token, el humano (en GitHub);
   código, workflow, push y verificación, el agente.
+
+## Entorno local (11/11/2026)
+
+- **`.venv` recreado:** el que había se creó en la carpeta de otro proyecto
+  (`revisora_legislativa`) y llegó copiado con esta; los «shebangs» de `pip` y
+  `congreso` apuntaban a aquella ruta («No such file or directory»). Regla: los
+  entornos virtuales no son reubicables. Recreado con `python3 -m venv --clear
+  .venv` + `make setup`; si el error reaparece, lo mismo.
