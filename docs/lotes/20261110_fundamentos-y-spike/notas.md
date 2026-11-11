@@ -56,4 +56,32 @@ votaciones de la sesión 202 coinciden entre el CSV de CongresoAbierto y el JSON
   `github.com/johacks24/vciudadania`. ADR-0006 ya preveía ajustar el enlace al fijar
   la URL.
 - **Programado para el 12/11/2026:** B.6 · D.3 · D.2 (Pages en modo GitHub Actions; al
-  cerrar D.2, la apuesta pasa a **producción** en `docs/apuestas.md`).
+  cerrar D.2, la apuesta pasa a **producción** en `docs/apuestas.md`). B.6 adelantada y
+  completada el 11/11 (abajo); D.3 y D.2 siguen el mismo día.
+
+## B.6 completada: credencial propia del proyecto (11/11/2026)
+
+- **Estado verificado:** el llavero guarda el token fino con cuenta `johacks24`; la
+  credencial del editor (`90719580`) está borrada. Comprobado con
+  `security find-internet-password` (solo queda la cuenta `johacks24`) y
+  `git credential fill` → `username=johacks24`.
+- **Caducidad del token fino:** martes **9/2/2027** (90 días). Renovar antes: generar
+  otro fine-grained (solo repo `vciudadania`, permiso Contents: Read and write) en
+  github.com/settings/personal-access-tokens y repetir el runbook de abajo. Ventana de
+  renovación: a partir del 12/1/2027.
+- **Primera vuelta fallida (4x4 nº 5, lección en AGENTS.md):** los comandos se
+  ejecutaron en el terminal de VSCodium; su `GIT_ASKPASS` inyectó la sesión del editor,
+  el `git push` autenticó en silencio con `90719580` y el llavero la volvió a guardar.
+  Síntoma: el push «funcionaba» sin pedir credenciales y `git credential fill` seguía
+  devolviendo `90719580`.
+- **Runbook corregido (verifica cada peldaño):**
+  1. `printf 'protocol=https\nhost=github.com\n' | git credential reject`
+  2. Verificar: `security find-internet-password -s github.com` → «could not be found».
+     Si sigue apareciendo: `security delete-internet-password -s github.com >/dev/null`
+     y repetir la verificación.
+  3. `env -u GIT_ASKPASS git push` → pide credenciales: usuario `johacks24`,
+     contraseña = el token fino (permitir el acceso al llavero si macOS lo pide).
+  4. Verificar: `security find-internet-password -s github.com -a johacks24` y
+     `git credential fill` → `username=johacks24`.
+- Con la credencial propia en el llavero, los pushes ya no consultan el `GIT_ASKPASS`
+  del editor (solo entraría en juego si el llavero no respondiera).

@@ -104,3 +104,10 @@ operativa para el agente, no como nota para el humano. El aprendizaje del proyec
   entienden («colina» por hillchart, «conejos» por rabbit holes, «piteado» por
   pitch/ched). **Regla: concepto explícito en castellano o término en inglés entre
   paréntesis; cuando haya duda de traducción, se deja en inglés.**
+- 2026-11-11 (4x4 nº 5, credenciales git): el push guiado de B.6 autenticó en silencio
+  con la sesión del editor (GIT_ASKPASS de VSCodium) y el llavero volvió a guardar
+  `90719580` sin que el humano tecleara nada. **Regla: cuando un paso exija credenciales
+  nuevas del humano, (1) verificar cada peldaño contra el estado real (`git credential
+  reject` → `security find-internet-password -s github.com` hasta «could not be
+  found») y (2) blindar el comando con `env -u GIT_ASKPASS` para que git pida de
+  verdad.**
