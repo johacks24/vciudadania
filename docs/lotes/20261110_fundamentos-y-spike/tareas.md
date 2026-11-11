@@ -5,11 +5,9 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 ## Estado vivo
 
 - **En exploración:** ninguna
-- **En construcción:** D.3 · D.2. Orden del día: D.3 antes del push final de D.2 (la
-  ficha sube ya corregida). B.6 completada el 11/11 (credencial propia en el llavero;
-  caducidad del token: 9/2/2027). El push de D.2 necesita Pages activada antes
-  (Settings → Pages → Source: GitHub Actions). Desbloqueos y hallazgos del 11/11:
-  `notas.md`
+- **En construcción:** D.2. Orden del día: Pages activada (Settings → Pages →
+  Source: GitHub Actions), push del workflow y verificación de la URL pública. B.6 y
+  D.3 completadas el 11/11. Desbloqueos y hallazgos del 11/11: `notas.md`
 
 ## Scope A — Auditoría de base
 
@@ -57,13 +55,11 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       `https://johacks24.github.io/vciudadania/` con los 5 pasos del recorrido; (4)
       cerrar: apuesta a **producción** en `docs/apuestas.md`. Decisión y alternativas:
       `docs/decisiones/0006-despliegue.md`. Ejecutar D.3 antes del push final*
-- [ ] D.3 Enlace al repo en la ficha — *la ficha generada enlaza
-      `github.com/vciudadania` (no existe). Corregir en el generador
-      (`congreso/congreso/exportar_ficha.py`, ~línea 59) a
-      `github.com/johacks24/vciudadania` — opción mejor: enlace directo al fichero
-      (`blob/main/docs/metodo/metodo.md`, que es lo que dice el texto del enlace) —,
-      regenerar con `make exportar` y validar. Consecuencia prevista en ADR-0006 —
-      día 12/11*
+- [x] D.3 Enlace al repo en la ficha — *hecho el 11/11: el pie de la ficha enlaza el
+      método en el repo real
+      (`github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md`, la opción
+      mejor del brief). Corregido en el generador, regenerado con `make exportar`,
+      validación 100 % (`make validar`) y tests 4/4 (`make test`)*
 
 ## Scope E — Cierre
 

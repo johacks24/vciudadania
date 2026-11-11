@@ -56,7 +56,7 @@ PLANTILLA = """<!doctype html>
 <footer>
 <p>Fuente: vCiudadania (vciudadania), a partir de los <a href="https://www.congreso.es/es/opendata">datos abiertos
 del Congreso de los Diputados</a>. Cada votación enlaza su registro oficial. La valoración es tuya:
-no recomendamos el voto. Método y límites: <a href="https://github.com/vciudadania">docs/metodo/metodo.md</a>.</p>
+no recomendamos el voto. Método y límites: <a href="https://github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md">docs/metodo/metodo.md</a>.</p>
 </footer>
 </main>
 </body>
