@@ -139,15 +139,37 @@ def cmd_validar(args: argparse.Namespace) -> int:
 
 
 def cmd_exportar(args: argparse.Namespace) -> int:
-    ficheros = _ficheros_crudos(RAIZ, args.legislatura, args.sesion, args.fecha)
+    if bool(args.sesion) != bool(args.fecha):
+        LOG.error("--sesion y --fecha van juntas: ambas (una sesión) o ninguna (toda la legislatura).")
+        return 1
+    destino = RAIZ / "data" / "processed" / "congreso.sqlite"
+    if args.sesion:
+        ficheros = _ficheros_crudos(RAIZ, args.legislatura, args.sesion, args.fecha)
+    else:
+        ficheros = _ficheros_crudos_legislatura(RAIZ, args.legislatura)
     if not ficheros:
         LOG.error("No hay datos descargados: ejecuta primero `make ingesta`.")
         return 1
-    informe = exportar_sqlite(ficheros, RAIZ / "data" / "processed" / "congreso.sqlite", args.legislatura)
+    diputados = None
+    if not args.sesion:
+        # La XV completa incluye la tabla de diputados: se carga ANTES de escribir nada
+        # (si falta, falla rápido sin dejar una base a medias).
+        try:
+            diputados = cargar_diputados(RAIZ, args.legislatura)
+        except ValueError as e:
+            LOG.error("%s", e)
+            return 1
+    informe = exportar_sqlite(ficheros, destino, args.legislatura)
     malas = [i for i, ok in informe if not ok]
     LOG.info("SQLite: %d votaciones (%d con descuadre marcado).", len(informe), len(malas))
-    ficha = generar_ficha(ficheros, RAIZ / "web" / "index.html", args.legislatura)
-    LOG.info("Ficha generada: %s", ficha.relative_to(RAIZ))
+    if args.sesion:
+        # La web completa de la XV (portada, buscador, ~2.190 fichas) llega en C;
+        # en modo sesión se mantiene la ficha del lote 00.
+        ficha = generar_ficha(ficheros, RAIZ / "web" / "index.html", args.legislatura)
+        LOG.info("Ficha generada: %s", ficha.relative_to(RAIZ))
+    else:
+        n = exportar_diputados(diputados, destino, args.legislatura)
+        LOG.info("SQLite Leg%s completa: %d votaciones + %d diputados.", args.legislatura, len(informe), n)
     return 0
 
 
@@ -193,10 +215,10 @@ def main() -> None:
     s.add_argument("--fecha", default=None, help="formato AAAA-MM-DD")
     s.set_defaults(fn=cmd_validar)
 
-    s = sub.add_parser("exportar", help="generar SQLite y ficha (el modo legislatura llega en B.5)")
+    s = sub.add_parser("exportar", help="generar SQLite y ficha: una sesión o toda la legislatura")
     s.add_argument("--legislatura", default="XV")
-    s.add_argument("--sesion", type=int, required=True)
-    s.add_argument("--fecha", required=True, help="formato AAAA-MM-DD")
+    s.add_argument("--sesion", type=int, default=None)
+    s.add_argument("--fecha", default=None, help="formato AAAA-MM-DD")
     s.set_defaults(fn=cmd_exportar)
 
     args = p.parse_args()

@@ -60,12 +60,18 @@ CREATE INDEX IF NOT EXISTS idx_diputados_grupo ON diputados(grupo);
 
 
 def exportar(ficheros: list[Path], destino: Path, legislatura: str) -> list[tuple[str, bool]]:
-    """Escribe la BD. Devuelve [(id, validada_ok)] para el informe."""
+    """Escribe la BD. Devuelve [(id, validada_ok)] para el informe.
+
+    Reconstrucción limpia: borra votaciones/votos/resumen_grupos antes de escribir,
+    para que la base siempre refleje exactamente el alcance exportado (una sesión o
+    toda la legislatura), sin restos de exportaciones anteriores.
+    """
     destino.parent.mkdir(parents=True, exist_ok=True)
     bd = sqlite3.connect(destino)
     bd.executescript(ESQUEMA)
     bd.execute("DELETE FROM votos")
     bd.execute("DELETE FROM resumen_grupos")
+    bd.execute("DELETE FROM votaciones")
     informe: list[tuple[str, bool]] = []
     for f in ficheros:
         from .fuentes.congreso_es import cargar_registro

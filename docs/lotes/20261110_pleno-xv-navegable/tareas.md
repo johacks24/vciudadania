@@ -69,7 +69,12 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       derivará de las votaciones si hace falta; tabla SQLite PK (legislatura, nombre);
       `make diputados`, idempotente verificado; 19/19 tests; 4x4 nº 6: los tests de
       URLs asertan la URL completa*
-- [ ] B.5 Exportación SQLite completa de la XV (data/processed/congreso.sqlite)
+- [x] B.5 Exportación SQLite completa de la XV (data/processed/congreso.sqlite)
+      — *hecha el 23/11: `make exportar-legislatura` → **2.175 votaciones +
+      760.518 votos + 19.561 resúmenes + 412 diputados** (59 MB, 3 s, 0 descuadres);
+      760.518 + 4.200 (12 llamamiento × 350) = 764.718 de quevotan, cierre exacto;
+      reconstrucción limpia (también se borra votaciones) y fallo rápido si faltan
+      los diputados; el modo sesión del lote 00 verificado sin cambios; 23/23 tests*
 
 ## Scope C — Buscador y fichas (la web navegable)
 

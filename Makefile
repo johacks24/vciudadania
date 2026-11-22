@@ -1,4 +1,4 @@
-.PHONY: setup ingesta ingesta-legislatura diputados validar exportar test dev tail-logs limpiar
+.PHONY: setup ingesta ingesta-legislatura diputados validar exportar exportar-legislatura test dev tail-logs limpiar
 
 # Punto de entrada unico para humanos y agentes (Simon Willison / Armin Ronacher).
 # Comandos defensivos: si se usan mal, avisan en vez de romperse.
@@ -25,8 +25,11 @@ diputados: ## descargar exportadores de diputados (activos + bajas) y cargar la 
 validar: ## cuadrar TODA la legislatura descargada (recuentos individuales == totales oficiales)
 	.venv/bin/congreso validar --legislatura $(LEGISLATURA)
 
-exportar: ## generar data/processed/congreso.sqlite y la ficha web/index.html
+exportar: ## generar data/processed/congreso.sqlite y la ficha web/index.html (sesión 202)
 	.venv/bin/congreso exportar --legislatura $(LEGISLATURA) --sesion $(SESION) --fecha $(FECHA)
+
+exportar-legislatura: ## generar la SQLite completa de la legislatura (votaciones, votos, resúmenes y diputados)
+	.venv/bin/congreso exportar --legislatura $(LEGISLATURA)
 
 test: ## suite de tests
 	.venv/bin/pytest congreso -q

@@ -198,6 +198,26 @@ consultado el 22/11):
   construyó URLs rotas y el test las dio por buenas asertando subcadenas; el 404 real
   apareció al ejecutar. Ahora el test aserta las URLs completas.
 
+## 23/11/2026 · B.5 completada: SQLite completa de la XV
+
+- `make exportar-legislatura`: **2.175 votaciones + 760.518 votos + 19.561 resúmenes
+  por grupo + 412 diputados** en `data/processed/congreso.sqlite` (59 MB), en 3 s,
+  con 0 votaciones marcadas con descuadre. Las 2 no nominales son los dos
+  suplicatorios (Leg202-021 y Leg89-005, Comisión del Estatuto de los Diputados).
+- **Cierre exacto con quevotan, otra vez:** sus 764.718 votos individuales −
+  nuestros 760.518 = **4.200 = 12 llamamiento × 350 diputados** (los nombres que
+  ellas recuperan del Diario y que el opendata no publica).
+- Reconstrucción limpia: el exportador ahora también borra `votaciones` antes de
+  escribir (antes dejaba votaciones huérfanas de una exportación anterior).
+- Modo legislatura: carga los diputados ANTES de escribir nada (fallo rápido, sin
+  base a medias); el modo sesión del lote 00 queda intacto y verificado (`make
+  exportar` regeneró la ficha de la sesión 202 sin cambios).
+- La web completa de la XV (portada, buscador, ~2.190 fichas) es el scope C: esta
+  base es su fuente.
+- 4 tests nuevos (`test_exportar.py`): las cuatro tablas, fallo rápido sin
+  diputados, reconstrucción limpia entre modos, idempotencia → 23/23.
+
+
 
 
 
