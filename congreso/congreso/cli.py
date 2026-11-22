@@ -56,6 +56,7 @@ def cmd_ingesta(args: argparse.Namespace) -> int:
     for dia in dias:
         fecha_dma = f"{dia[6:8]}/{dia[4:6]}/{dia[0:4]}"
         urls = urls_votaciones(fecha_dma, args.legislatura)
+        time.sleep(PAUSA)  # la página del día también es una petición: pausa educada
         LOG.info("Día %s: %d votaciones con JSON publicado", dia, len(urls))
         if not urls:
             if args.fecha:

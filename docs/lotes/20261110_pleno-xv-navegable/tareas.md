@@ -40,8 +40,13 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       JSON (llamamiento) es categoría en modo legislatura y error solo en modo día;
       `make ingesta-legislatura` listo para que B.2 lo ejecute; 9/9 tests sin red con
       fixtures reales (índice y día de llamamiento)*
-- [ ] B.2 Descarga completa de la XV a `data/raw/` (inmutable; ~2.190 JSON de
+- [x] B.2 Descarga completa de la XV a `data/raw/` (inmutable; ~2.190 JSON de
       votación, pausa educada entre peticiones)
+      — *hecha el 22/11: **2.175 JSON** (72 MB, 144 sesiones, ~30 min, 0 errores,
+      idempotente: los 21 de la sesión 202 se saltaron); 5 de los 147 días sin JSON
+      (solo llamamiento); cuadra exacto con CongresoAbierto (2.175) y deja los 14
+      de diferencia con quevotan (2.189) para el contraste de B.3; pausa educada
+      también entre páginas de día*
 - [ ] B.3 Validación 100 % de la legislatura (recuentos individuales == totales
       oficiales, votación a votación) con categorías explícitas «sin voto individual
       publicado»: suplicatorios (secreto) y públicas por llamamiento (12 en la XV) →

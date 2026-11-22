@@ -116,3 +116,22 @@ Evidencias de la verificación (22/11/2026):
   (lo de CongresoAbierto), no 2.189: la diferencia son las 12 de llamamiento, y el
   contraste exacto es tarea de B.3.
 
+## 22/11/2026 · B.2 completada: descarga completa de la XV
+
+Ejecución: `make ingesta-legislatura` (22:56 → 23:26, **~30 min, 0 errores**).
+Ajuste de código de este mismo commit: la pausa educada de 0,5 s se aplica también
+**entre páginas de día** (B.2 exige pausa «entre peticiones»; B.1 solo la ponía
+entre descargas de JSON).
+
+- **Resultado:** **2.175 JSON** en `data/raw/LegXV` (2.154 nuevos + los 21 de la
+  sesión 202 ya descargados en el lote 00, que se saltaron: idempotencia verificada
+  en una ejecución real de 147 días). 144 carpetas de sesión, 72 MB.
+- **5 de los 147 días con 0 JSON:** días de solo votaciones públicas por
+  llamamiento (el último es 02/10/2026, sesión 203). B.3 los cataloga.
+- **Contraste de totales anticipado:** 2.175 = **exactamente** lo que publica
+  CongresoAbierto. Con quevotan (2.189) quedan **14 de diferencia**, casi seguro
+  votaciones de llamamiento sin JSON (los suplicatorios secretos SÍ publican JSON
+  con solo totales, como la votación 021 de la sesión 202). Explicarlo con evidencia
+  es la parte de contraste de B.3.
+
+
