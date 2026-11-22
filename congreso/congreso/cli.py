@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 
 from .exportar_ficha import generar as generar_ficha
+from .exportar_portada import N_ESTATICOS, generar_indice, generar_portada, votaciones_recientes
 from .exportar_sqlite import exportar as exportar_sqlite
 from .exportar_sqlite import exportar_diputados
 from .fuentes.congreso_es import (
@@ -196,6 +197,27 @@ def cmd_diputados(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_web(args: argparse.Namespace) -> int:
+    """Genera la portada y el índice de la legislatura desde la base exportada."""
+    bd = RAIZ / "data" / "processed" / "congreso.sqlite"
+    if not bd.exists():
+        LOG.error("No hay base exportada: ejecuta primero `make exportar-legislatura`.")
+        return 1
+    vots = votaciones_recientes(bd, args.legislatura)
+    if not vots:
+        LOG.error("La base no tiene votaciones de la Leg%s: `make ingesta-legislatura` primero.", args.legislatura)
+        return 1
+    web = RAIZ / "web"
+    indice = generar_indice(vots, web / "indice.json", args.legislatura)
+    portada = generar_portada(vots, web / "portada.html", args.legislatura)
+    LOG.info(
+        "Portada: %d votaciones (las %d primeras sin JavaScript) · índice: %s",
+        len(vots), min(N_ESTATICOS, len(vots)), indice.relative_to(RAIZ),
+    )
+    LOG.info("Generada: %s", portada.relative_to(RAIZ))
+    return 0
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="congreso", description="Ingesta y validación de votaciones del Congreso")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -204,6 +226,10 @@ def main() -> None:
     s.add_argument("--legislatura", default="XV")
     s.add_argument("--fecha", default=None, help="formato AAAA-MM-DD; sin ella, toda la legislatura")
     s.set_defaults(fn=cmd_ingesta)
+
+    s = sub.add_parser("web", help="generar la portada y el índice de la legislatura (las fichas llegan en C.4)")
+    s.add_argument("--legislatura", default="XV")
+    s.set_defaults(fn=cmd_web)
 
     s = sub.add_parser("diputados", help="descargar y cargar la tabla de diputados (activos + bajas)")
     s.add_argument("--legislatura", default="XV")

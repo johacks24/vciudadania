@@ -1,4 +1,4 @@
-.PHONY: setup ingesta ingesta-legislatura diputados validar exportar exportar-legislatura test dev tail-logs limpiar
+.PHONY: setup ingesta ingesta-legislatura diputados validar exportar exportar-legislatura web test dev tail-logs limpiar
 
 # Punto de entrada unico para humanos y agentes (Simon Willison / Armin Ronacher).
 # Comandos defensivos: si se usan mal, avisan en vez de romperse.
@@ -30,6 +30,9 @@ exportar: ## generar data/processed/congreso.sqlite y la ficha web/index.html (s
 
 exportar-legislatura: ## generar la SQLite completa de la legislatura (votaciones, votos, resúmenes y diputados)
 	.venv/bin/congreso exportar --legislatura $(LEGISLATURA)
+
+web: ## generar portada + índice JSON de la legislatura desde la base (scroll infinito; fichas en C.4)
+	.venv/bin/congreso web --legislatura $(LEGISLATURA)
 
 test: ## suite de tests
 	.venv/bin/pytest congreso -q

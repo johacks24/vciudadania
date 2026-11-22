@@ -217,6 +217,30 @@ consultado el 22/11):
 - 4 tests nuevos (`test_exportar.py`): las cuatro tablas, fallo rápido sin
   diputados, reconstrucción limpia entre modos, idempotencia → 23/23.
 
+## 23/11/2026 · C.1 completada: portada índice con scroll infinito
+
+- `make web` → `web/portada.html` + `web/indice.json`, generados desde la SQLite de
+  B.5 (la web del scope C lee la base, no los raw: la base es su capa de datos).
+- **Decisión de transición:** la portada vive en `portada.html` hasta que C.4 genere
+  las ~2.190 fichas; entonces se promueve a `index.html`. Así la producción del
+  lote 00 (ficha de la sesión 202 en Pages) no queda rota a medias. Los enlaces de
+  los elementos ya apuntan a `votacion/<id>.html` (existen a partir de C.4).
+- Mejora progresiva: los primeros **50** van en el propio HTML (se ven sin
+  JavaScript); el resto se carga al llegar al final (IntersectionObserver con
+  margen de 600 px; botón «Mostrar más» como respaldo). Índice: 510 KB con 2.175
+  items; el ORDEN del array ES la cronología — el cliente no ordena nada.
+- Orden: recientes primero, parseando la fecha de la fuente (D/M/YYYY no es
+  ordenable como texto); dentro de un día, sesión y número descendentes. Extremos
+  verificados: la más reciente es Leg202-021 (30/9/2026) y la más antigua
+  Leg2-001 (19/9/2023), la primera votación de la XV.
+- Los elementos muestran recuentos («137 Sí · 175 No · 34 Abst.»), no veredictos:
+  la ficha del lote 00 ya razonó por qué («Más Sí que No» ≠ «aprobada» con mayoría
+  cualificada). Las 2 no nominales llevan su marca explícita. Todo texto de la
+  fuente, escapado.
+- 5 tests nuevos (`test_portada.py`): orden, contrato del índice, primeros sin
+  JavaScript, límite de N estáticos, escape de HTML → 28/28.
+
+
 
 
 

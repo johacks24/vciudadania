@@ -78,9 +78,15 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 ## Scope C — Buscador y fichas (la web navegable)
 
-- [ ] C.1 Portada índice: las votaciones más recientes primero, con carga automática
+- [x] C.1 Portada índice: las votaciones más recientes primero, con carga automática
       al llegar al final de la página (scroll infinito) sobre el índice JSON de C.2;
       los primeros N sin JavaScript (recorrido 1)
+      — *hecha el 23/11: `make web` → portada.html + indice.json (2.175 items,
+      recientes primero; extremos verificados: Leg202-021 y Leg2-001, la primera
+      votación de la XV); 50 sin JavaScript + scroll infinito (IntersectionObserver
+      con botón de respaldo); generada desde la SQLite de B.5; vive en portada.html
+      hasta que C.4 la promueva a index.html (producción del lote 00 intacta);
+      28/28 tests*
 - [ ] C.2 Búsqueda por palabra y filtro por resultado con índice JSON compacto
       filtrado en cliente (decisión en `notas.md`; ADR-0002)
 - [ ] C.3 Tema por votación: importar los temas de CongresoAbierto (CC BY 4.0) con
