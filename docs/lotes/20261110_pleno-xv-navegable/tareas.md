@@ -47,10 +47,17 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       (solo llamamiento); cuadra exacto con CongresoAbierto (2.175) y deja los 14
       de diferencia con quevotan (2.189) para el contraste de B.3; pausa educada
       también entre páginas de día*
-- [ ] B.3 Validación 100 % de la legislatura (recuentos individuales == totales
+- [x] B.3 Validación 100 % de la legislatura (recuentos individuales == totales
       oficiales, votación a votación) con categorías explícitas «sin voto individual
       publicado»: suplicatorios (secreto) y públicas por llamamiento (12 en la XV) →
       contraste del total con quevotan (2.189) y CongresoAbierto (2.175)
+      — *hecha el 22/11: **2.175 validadas: 2.173 nominales == totales oficiales,
+      2 suplicatorios (sesiones 89 y 202), 0 descuadres, 0 duplicadas**, en 1,3 s;
+      `make validar` pasa a modo legislatura con detección de duplicados y 13/13
+      tests. Contraste cerrado con evidencia: CongresoAbierto 2.175 (exacto);
+      quevotan 2.189 = +14 llamamiento sin JSON (sesiones 5, 6, 8, 11, 15×4, 17, 18,
+      30, 43, 203×2; 12 con nominal recuperado del Diario). La tarea decía «12»:
+      la cifra exacta verificada es 14*
 - [ ] B.4 Tabla de diputados de la XV: esquema pydantic primero, luego carga desde el
       opendata de diputados (altas/bajas, formación, grupo) — identificadores
       estables; sin suponer una sola legislatura (ADR-0003)

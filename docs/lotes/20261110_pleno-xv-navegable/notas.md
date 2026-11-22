@@ -134,4 +134,39 @@ entre descargas de JSON).
   con solo totales, como la votación 021 de la sesión 202). Explicarlo con evidencia
   es la parte de contraste de B.3.
 
+## 22/11/2026 · B.3 completada: validación 100 % de la XV + contraste de totales
+
+**Validación** (`make validar`, ahora en modo legislatura; nuevo en este commit):
+
+- **2.175 votaciones: 2.173 con detalle individual validado (recuento == totales
+  oficiales), 2 no nominales, 0 descuadres, 0 duplicadas** — 1,3 s, sin red.
+- Las 2 no nominales (suplicatorios secretos, JSON con solo totales): **sesión 89**
+  (22/01/2025, votación 5) y **sesión 202** (30/09/2026, votación 21).
+- CLI: `congreso validar --legislatura XV` (sin sesión/fecha) valida toda la
+  legislatura e imprime solo los problemas; `--sesion/--fecha` mantiene la tabla del
+  lote 00. Añade detección de **ids duplicados** (la fuente listando una votación dos
+  veces): 0 encontradas. Tests: 4 nuevos → 13/13.
+
+**Contraste de totales** (evidencia, sesión a sesión contra quevotan.eu/XV/sesiones/
+consultado el 22/11):
+
+- **CongresoAbierto: 2.175 = exacto** con nuestros JSON (ambos consumimos solo el
+  opendata; su CSV iba al día).
+- **quevotan: 2.189 = nuestros 2.175 + 14 votaciones públicas por llamamiento sin
+  JSON en el opendata**, repartidas en 10 sesiones: 5, 6 (investiduras, 27 y
+  29/09/2023), 8, 11, **15 × 4 (día de la amnistía, 10/01/2024)**, 17, 18, 30, 43 y
+  **203 × 2 (convalidaciones RDL, 02/10/2026)**. La tarea decía «12 en la XV» (cifra
+  de su README); la exacta verificada es **14**, de las que **12** tienen nominal
+  recuperado del Diario de Sesiones (su especialidad) y 2 no (las de la sesión 203).
+- **Cierre exacto por ambas columnas:** 2.189 = 2.175 + 14, y su «con voto nominal»
+  2.185 = 2.173 + 12; sus 4 sin nominal = 2 suplicatorios + 2 de la sesión 203.
+- Evidencia directa en sesión mixta: la página de la sesión 15 marca «(Pública por
+  llamamiento)» en sus votaciones 8, 9, 11 y 12 — exactamente las 4 que nos faltan
+  de sus 12.
+- Conclusión de producto: nuestro universo publicable es el de las **2.175 con JSON**
+  (el mismo que CongresoAbierto); las 14 de llamamiento quedan como categoría
+  documentada «sin voto individual publicado», enlazable al Diario sin extraer el
+  PDF (fuera del lote).
+
+
 

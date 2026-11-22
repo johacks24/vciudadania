@@ -45,6 +45,11 @@ def _ficheros_crudos(raiz: Path, legislatura: str, sesion: int, fecha_iso: str) 
     return sorted(base.rglob("VOT_*.json"))
 
 
+def _ficheros_crudos_legislatura(raiz: Path, legislatura: str) -> list[Path]:
+    """Todos los VOT_*.json descargados de la legislatura (cualquier sesión y fecha)."""
+    return sorted((raiz / "data" / "raw" / f"Leg{legislatura}").rglob("VOT_*.json"))
+
+
 def cmd_ingesta(args: argparse.Namespace) -> int:
     raiz = RAIZ
     if args.fecha:
@@ -84,32 +89,48 @@ def cmd_ingesta(args: argparse.Namespace) -> int:
 
 
 def cmd_validar(args: argparse.Namespace) -> int:
-    ficheros = _ficheros_crudos(RAIZ, args.legislatura, args.sesion, args.fecha)
+    if bool(args.sesion) != bool(args.fecha):
+        LOG.error("--sesion y --fecha van juntas: ambas (una sesión) o ninguna (toda la legislatura).")
+        return 1
+    if args.sesion:
+        ficheros = _ficheros_crudos(RAIZ, args.legislatura, args.sesion, args.fecha)
+    else:
+        ficheros = _ficheros_crudos_legislatura(RAIZ, args.legislatura)
     if not ficheros:
         LOG.error("No hay datos descargados: ejecuta primero `make ingesta`.")
         return 1
-    fallos, sin_individuales = 0, 0
-    print(f"{'votación':<12}{'Sí':>5}{'No':>5}{'Abst':>6}{'NoVota':>8}  estado")
+    detallado = bool(args.sesion)  # una sesión: tabla por votación; legislatura: solo problemas
+    fallos, sin_individuales, duplicadas = 0, 0, 0
+    vistas: set[str] = set()
+    if detallado:
+        print(f"{'votación':<12}{'Sí':>5}{'No':>5}{'Abst':>6}{'NoVota':>8}  estado")
     for f in ficheros:
         reg = cargar_registro(f)
-        d = reg.validar()
-        t = reg.totales
-        estado = "OK" if not d else "DESCUADRE: " + "; ".join(d)
+        descuadres = list(reg.validar())
+        duplicada = reg.id in vistas
+        if duplicada:
+            duplicadas += 1
+        vistas.add(reg.id)
         if reg.sin_voto_individual:
             sin_individuales += 1
-            estado = "OK (sin voto individual publicado)"
-        elif d:
+        elif descuadres:
             fallos += 1
-        print(f"{reg.id:<12}{t.afavor:>5}{t.en_contra:>5}{t.abstenciones:>6}{t.no_votan:>8}  {estado}")
+        problemas = descuadres + (["id duplicado: la fuente listó esta votación dos veces"] if duplicada else [])
+        t = reg.totales
+        estado = "; ".join(problemas) or (
+            "OK (sin voto individual publicado)" if reg.sin_voto_individual else "OK"
+        )
+        if detallado or problemas:
+            print(f"{reg.id:<12}{t.afavor:>5}{t.en_contra:>5}{t.abstenciones:>6}{t.no_votan:>8}  {estado}")
     total = len(ficheros)
     print(
         f"\n{total} votaciones: {total - fallos - sin_individuales} validadas con detalle "
-        f"individual, {sin_individuales} no nominales, {fallos} con descuadre."
+        f"individual, {sin_individuales} no nominales, {fallos} con descuadre, {duplicadas} duplicadas."
     )
-    if fallos:
-        LOG.error("Validación FALLIDA: %d votaciones con descuadre. Publicación bloqueada.", fallos)
+    if fallos or duplicadas:
+        LOG.error("Validación FALLIDA: %d con descuadre, %d duplicadas. Publicación bloqueada.", fallos, duplicadas)
         return 1
-    LOG.info("Validación 100%% correcta contra los totales oficiales.")
+    LOG.info("Validación 100%% correcta contra los totales oficiales (%d votaciones, Leg%s).", total, args.legislatura)
     return 0
 
 
@@ -135,12 +156,17 @@ def main() -> None:
     s.add_argument("--fecha", default=None, help="formato AAAA-MM-DD; sin ella, toda la legislatura")
     s.set_defaults(fn=cmd_ingesta)
 
-    for nombre, fn in (("validar", cmd_validar), ("exportar", cmd_exportar)):
-        s = sub.add_parser(nombre)
-        s.add_argument("--legislatura", default="XV")
-        s.add_argument("--sesion", type=int, required=True)
-        s.add_argument("--fecha", required=True, help="formato AAAA-MM-DD")
-        s.set_defaults(fn=fn)
+    s = sub.add_parser("validar", help="cuadrar recuentos contra totales oficiales: una sesión o toda la legislatura")
+    s.add_argument("--legislatura", default="XV")
+    s.add_argument("--sesion", type=int, default=None)
+    s.add_argument("--fecha", default=None, help="formato AAAA-MM-DD")
+    s.set_defaults(fn=cmd_validar)
+
+    s = sub.add_parser("exportar", help="generar SQLite y ficha (el modo legislatura llega en B.5)")
+    s.add_argument("--legislatura", default="XV")
+    s.add_argument("--sesion", type=int, required=True)
+    s.add_argument("--fecha", required=True, help="formato AAAA-MM-DD")
+    s.set_defaults(fn=cmd_exportar)
 
     args = p.parse_args()
     RAIZ.joinpath("data").mkdir(exist_ok=True)

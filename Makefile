@@ -19,8 +19,8 @@ ingesta: ## descargar el día de prueba (sesión 202, 30/09/2026) desde la fuent
 ingesta-legislatura: ## descargar TODA la legislatura (XV: 147 días, ~2.190 JSON, ~25 min con pausa educada)
 	.venv/bin/congreso ingesta --legislatura $(LEGISLATURA)
 
-validar: ## cuadrar recuentos individuales contra los totales oficiales
-	.venv/bin/congreso validar --legislatura $(LEGISLATURA) --sesion $(SESION) --fecha $(FECHA)
+validar: ## cuadrar TODA la legislatura descargada (recuentos individuales == totales oficiales)
+	.venv/bin/congreso validar --legislatura $(LEGISLATURA)
 
 exportar: ## generar data/processed/congreso.sqlite y la ficha web/index.html
 	.venv/bin/congreso exportar --legislatura $(LEGISLATURA) --sesion $(SESION) --fecha $(FECHA)
