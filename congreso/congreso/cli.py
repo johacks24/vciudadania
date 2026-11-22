@@ -1,18 +1,27 @@
-"""CLI: congreso ingesta | validar | exportar"""
+"""CLI: congreso ingesta (un día o toda la legislatura) | validar | exportar"""
 
 from __future__ import annotations
 
 import argparse
 import logging
 import sys
+import time
 from pathlib import Path
 
 from .exportar_ficha import generar as generar_ficha
 from .exportar_sqlite import exportar as exportar_sqlite
-from .fuentes.congreso_es import descargar, ruta_cruda, urls_votaciones, cargar_registro
+from .fuentes.congreso_es import (
+    cargar_registro,
+    descargar,
+    dias_votaciones,
+    ruta_cruda,
+    sesion_y_fecha_de_url,
+    urls_votaciones,
+)
 
 RAIZ = Path(__file__).resolve().parents[2]  # raíz del repo
 LOG = logging.getLogger("congreso")
+PAUSA = 0.5  # pausa educada entre descargas (quevotan usa 0,5 s)
 
 
 def _configurar_log(raiz: Path) -> None:
@@ -27,12 +36,6 @@ def _configurar_log(raiz: Path) -> None:
         LOG.addHandler(h)
 
 
-def _fecha_dma(fecha_iso: str) -> str:
-    """2026-09-30 → 30/09/2026 (formato que espera la página del Congreso)."""
-    a, m, d = fecha_iso.split("-")
-    return f"{d}/{m}/{a}"
-
-
 def _fecha_compacta(fecha_iso: str) -> str:
     return fecha_iso.replace("-", "")
 
@@ -44,16 +47,38 @@ def _ficheros_crudos(raiz: Path, legislatura: str, sesion: int, fecha_iso: str) 
 
 def cmd_ingesta(args: argparse.Namespace) -> int:
     raiz = RAIZ
-    urls = urls_votaciones(_fecha_dma(args.fecha), args.legislatura)
-    LOG.info("Enumeración: %d votaciones encontradas para %s (Leg%s)", len(urls), args.fecha, args.legislatura)
-    if not urls:
-        LOG.error("No se encontraron votaciones: revisa fecha y legislatura.")
-        return 1
-    for url in urls:
-        destino = ruta_cruda(raiz, args.legislatura, args.sesion, _fecha_compacta(args.fecha), url)
-        descargar(url, destino)
-        LOG.info("Descargado %s", destino.relative_to(raiz))
-    LOG.info("Ingesta completa: %d ficheros en data/raw (inmutables).", len(urls))
+    if args.fecha:
+        dias = [_fecha_compacta(args.fecha)]
+    else:
+        dias = dias_votaciones(args.legislatura)
+        LOG.info("Enumeración: %d días con votaciones en Leg%s", len(dias), args.legislatura)
+    nuevos = 0
+    for dia in dias:
+        fecha_dma = f"{dia[6:8]}/{dia[4:6]}/{dia[0:4]}"
+        urls = urls_votaciones(fecha_dma, args.legislatura)
+        LOG.info("Día %s: %d votaciones con JSON publicado", dia, len(urls))
+        if not urls:
+            if args.fecha:
+                LOG.error(
+                    "0 votaciones con JSON para %s: ¿fecha correcta? Un día con solo "
+                    "votaciones públicas por llamamiento no publica JSON (p. ej. sesión 203).",
+                    args.fecha,
+                )
+                return 1
+            continue  # en modo legislatura, día sin JSON es una categoría, no un error
+        for url in urls:
+            sesion, fecha_url = sesion_y_fecha_de_url(url)
+            destino = ruta_cruda(raiz, args.legislatura, sesion, fecha_url, url)
+            if destino.exists():
+                continue  # data/raw es inmutable e idempotente: no se re-descarga
+            descargar(url, destino)
+            nuevos += 1
+            LOG.info("Descargado %s", destino.relative_to(raiz))
+            time.sleep(PAUSA)
+    LOG.info(
+        "Ingesta completa (%s): %d ficheros nuevos en data/raw (inmutables).",
+        args.fecha or f"Leg{args.legislatura}", nuevos,
+    )
     return 0
 
 
@@ -103,12 +128,19 @@ def cmd_exportar(args: argparse.Namespace) -> int:
 def main() -> None:
     p = argparse.ArgumentParser(prog="congreso", description="Ingesta y validación de votaciones del Congreso")
     sub = p.add_subparsers(dest="cmd", required=True)
-    for nombre, fn in (("ingesta", cmd_ingesta), ("validar", cmd_validar), ("exportar", cmd_exportar)):
+
+    s = sub.add_parser("ingesta", help="descargar votaciones: un día (--fecha) o toda la legislatura")
+    s.add_argument("--legislatura", default="XV")
+    s.add_argument("--fecha", default=None, help="formato AAAA-MM-DD; sin ella, toda la legislatura")
+    s.set_defaults(fn=cmd_ingesta)
+
+    for nombre, fn in (("validar", cmd_validar), ("exportar", cmd_exportar)):
         s = sub.add_parser(nombre)
         s.add_argument("--legislatura", default="XV")
         s.add_argument("--sesion", type=int, required=True)
         s.add_argument("--fecha", required=True, help="formato AAAA-MM-DD")
         s.set_defaults(fn=fn)
+
     args = p.parse_args()
     RAIZ.joinpath("data").mkdir(exist_ok=True)
     _configurar_log(RAIZ)

@@ -1,4 +1,4 @@
-.PHONY: setup ingesta validar exportar test dev tail-logs limpiar
+.PHONY: setup ingesta ingesta-legislatura validar exportar test dev tail-logs limpiar
 
 # Punto de entrada unico para humanos y agentes (Simon Willison / Armin Ronacher).
 # Comandos defensivos: si se usan mal, avisan en vez de romperse.
@@ -13,8 +13,11 @@ setup: ## crear .venv e instalar el paquete congreso
 	.venv/bin/pip install -e "congreso[dev]"
 	@echo "Listo. Prueba: make test"
 
-ingesta: ## descargar la sesion de prueba desde la fuente primaria (Congreso)
-	.venv/bin/congreso ingesta --legislatura $(LEGISLATURA) --sesion $(SESION) --fecha $(FECHA)
+ingesta: ## descargar el día de prueba (sesión 202, 30/09/2026) desde la fuente primaria
+	.venv/bin/congreso ingesta --legislatura $(LEGISLATURA) --fecha $(FECHA)
+
+ingesta-legislatura: ## descargar TODA la legislatura (XV: 147 días, ~2.190 JSON, ~25 min con pausa educada)
+	.venv/bin/congreso ingesta --legislatura $(LEGISLATURA)
 
 validar: ## cuadrar recuentos individuales contra los totales oficiales
 	.venv/bin/congreso validar --legislatura $(LEGISLATURA) --sesion $(SESION) --fecha $(FECHA)

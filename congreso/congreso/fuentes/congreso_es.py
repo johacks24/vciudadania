@@ -1,8 +1,14 @@
 """Cliente de la fuente primaria: datos abiertos del Congreso de los Diputados.
 
-Notas verificadas (docs/lotes/20261110_fundamentos-y-spike/notas.md):
+Notas verificadas (lote 00: docs/lotes/20261110_fundamentos-y-spike/notas.md;
+lote 01: docs/lotes/20261110_pleno-xv-navegable/notas.md):
 - La página de opendata bloquea peticiones sin user-agent de navegador (403).
-- La página ?targetDate=DD/MM/YYYY&targetLegislatura=XV lista los JSON de la sesión.
+- La página ?targetDate=DD/MM/YYYY&targetLegislatura=XV lista los JSON de ese día.
+- El índice (solo targetLegislatura) publica `var diasVotaciones = [20230919, …]`
+  (enteros): todos los días con votaciones de la legislatura. Verificado el
+  22/11/2026: XV = 147 días (19/09/2023 → 02/10/2026); XIV = 170.
+- Los días con solo votaciones públicas por llamamiento no publican JSON por
+  votación (sí un ZIP por sesión): la sesión 203 (02/10/2026) es el caso real.
 """
 
 from __future__ import annotations
@@ -22,6 +28,37 @@ UA = (
 )
 
 RE_JSON = re.compile(r"webpublica/opendata/votaciones/[^\"']+\.json")
+RE_DIAS = re.compile(r"var\s+diasVotaciones\s*=\s*(\[[^\]]*\])")
+
+
+def pagina_indice(legislatura: str = "XV") -> str:
+    """HTML del índice de la legislatura (calendario completo, sin fecha)."""
+    r = httpx.get(
+        f"{BASE}/es/opendata/votaciones",
+        params={"targetLegislatura": legislatura},
+        headers={"User-Agent": UA},
+        timeout=30,
+        follow_redirects=True,
+    )
+    r.raise_for_status()
+    return r.text
+
+
+def dias_votaciones(legislatura: str = "XV") -> list[str]:
+    """Fechas compactas (YYYYMMDD) de todos los días con votaciones de la legislatura."""
+    m = RE_DIAS.search(pagina_indice(legislatura))
+    if not m:
+        raise ValueError("índice sin diasVotaciones: formato de la página cambiado")
+    return sorted({f"{d:08d}" for d in json.loads(m.group(1))})
+
+
+def sesion_y_fecha_de_url(url: str) -> tuple[int, str]:
+    """Sesión y fecha compacta extraídas de la propia URL oficial:
+    …/opendata/votaciones/Leg15/Sesion202/20260930/Votacion010/VOT_….json
+    (así no hay que conocer la sesión antes de descargar el fichero).
+    """
+    partes = url.split("opendata/votaciones/")[-1].split("/")
+    return int(partes[1].removeprefix("Sesion")), partes[2]
 
 
 def pagina_votaciones(fecha_dma: str, legislatura: str = "XV") -> str:

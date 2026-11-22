@@ -31,9 +31,15 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 ## Scope B — Ingesta XV completa (el corazón de datos)
 
-- [ ] B.1 Enumeración por legislatura: escalar el cliente de sesión suelta a la XV
+- [x] B.1 Enumeración por legislatura: escalar el cliente de sesión suelta a la XV
       completa (índice `diasVotaciones`: 147 días, 19/09/2023 → 02/10/2026) y
       preparar el CLI/Makefile para legislatura entera
+      — *hecha el 22/11: índice real `var diasVotaciones = [enteros]` con
+      `targetLegislatura` (147 días verificados en vivo); sesión y fecha derivadas de
+      la propia URL oficial (ingesta pierde `--sesion`); pausa educada 0,5 s; día sin
+      JSON (llamamiento) es categoría en modo legislatura y error solo en modo día;
+      `make ingesta-legislatura` listo para que B.2 lo ejecute; 9/9 tests sin red con
+      fixtures reales (índice y día de llamamiento)*
 - [ ] B.2 Descarga completa de la XV a `data/raw/` (inmutable; ~2.190 JSON de
       votación, pausa educada entre peticiones)
 - [ ] B.3 Validación 100 % de la legislatura (recuentos individuales == totales
