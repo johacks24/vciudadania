@@ -58,9 +58,17 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       quevotan 2.189 = +14 llamamiento sin JSON (sesiones 5, 6, 8, 11, 15×4, 17, 18,
       30, 43, 203×2; 12 con nominal recuperado del Diario). La tarea decía «12»:
       la cifra exacta verificada es 14*
-- [ ] B.4 Tabla de diputados de la XV: esquema pydantic primero, luego carga desde el
+- [x] B.4 Tabla de diputados de la XV: esquema pydantic primero, luego carga desde el
       opendata de diputados (altas/bajas, formación, grupo) — identificadores
       estables; sin suponer una sola legislatura (ADR-0003)
+      — *hecha el 22/11: `Diputado` (esquema primero); exportadores Activos + DeBaja
+      del opendata: **137 + 275 = 412**, la cifra exacta de quevotan; clave natural
+      nombre + legislatura (412 únicos, formato idéntico al campo `diputado` de las
+      votaciones); 9 grupos con nombre oficial; limitación declarada: el exportador
+      trae el grupo final (Belarra → Mixto el 05/12/2023), la historia previa se
+      derivará de las votaciones si hace falta; tabla SQLite PK (legislatura, nombre);
+      `make diputados`, idempotente verificado; 19/19 tests; 4x4 nº 6: los tests de
+      URLs asertan la URL completa*
 - [ ] B.5 Exportación SQLite completa de la XV (data/processed/congreso.sqlite)
 
 ## Scope C — Buscador y fichas (la web navegable)

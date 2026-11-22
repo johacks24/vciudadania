@@ -10,12 +10,16 @@ from pathlib import Path
 
 from .exportar_ficha import generar as generar_ficha
 from .exportar_sqlite import exportar as exportar_sqlite
+from .exportar_sqlite import exportar_diputados
 from .fuentes.congreso_es import (
+    cargar_diputados,
     cargar_registro,
     descargar,
     dias_votaciones,
     ruta_cruda,
+    ruta_diputados,
     sesion_y_fecha_de_url,
+    urls_diputados,
     urls_votaciones,
 )
 
@@ -147,6 +151,29 @@ def cmd_exportar(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_diputados(args: argparse.Namespace) -> int:
+    """Descarga los exportadores (activos + bajas), carga la tabla y la escribe en SQLite."""
+    for url in urls_diputados():
+        destino = ruta_diputados(RAIZ, args.legislatura, url)
+        if destino.exists():
+            continue  # data/raw inmutable e idempotente
+        descargar(url, destino)
+        LOG.info("Descargado %s", destino.relative_to(RAIZ))
+        time.sleep(PAUSA)
+    diputados = cargar_diputados(RAIZ, args.legislatura)
+    n = exportar_diputados(diputados, RAIZ / "data" / "processed" / "congreso.sqlite", args.legislatura)
+    activos = sum(1 for d in diputados if not d.fecha_baja)
+    print(
+        f"\n{len(diputados)} diputados de la Leg{args.legislatura}: "
+        f"{activos} activos, {len(diputados) - activos} con baja."
+    )
+    LOG.info(
+        "Tabla diputados: %d registros (%d activos, %d con baja) en SQLite.",
+        n, activos, len(diputados) - activos,
+    )
+    return 0
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="congreso", description="Ingesta y validación de votaciones del Congreso")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -155,6 +182,10 @@ def main() -> None:
     s.add_argument("--legislatura", default="XV")
     s.add_argument("--fecha", default=None, help="formato AAAA-MM-DD; sin ella, toda la legislatura")
     s.set_defaults(fn=cmd_ingesta)
+
+    s = sub.add_parser("diputados", help="descargar y cargar la tabla de diputados (activos + bajas)")
+    s.add_argument("--legislatura", default="XV")
+    s.set_defaults(fn=cmd_diputados)
 
     s = sub.add_parser("validar", help="cuadrar recuentos contra totales oficiales: una sesión o toda la legislatura")
     s.add_argument("--legislatura", default="XV")

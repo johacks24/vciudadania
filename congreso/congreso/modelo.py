@@ -108,3 +108,36 @@ class RegistroVotacion(BaseModel):
             ({"grupo": k, **v} for k, v in grupos.items()),
             key=lambda r: -(r["Sí"] + r["No"] + r["Abstención"]),
         )
+
+
+class Diputado(BaseModel):
+    """Un diputado de una legislatura, desde el opendata de diputados del Congreso.
+
+    Fuente: exportadores «Diputados en Activo» + «Diputados de Baja en la legislatura
+    actual» (congreso.es/es/opendata/diputados). Campos verificados el 22/11/2026
+    sobre la XV completa: 137 activos + 275 de baja = 412, sin nombres duplicados.
+
+    El exportador no trae código de diputado: la clave natural es el nombre (formato
+    «Apellidos, Nombre», idéntico al campo `diputado` de los JSON de votación, así que
+    la unión votos↔diputados es por nombre exacto) + la legislatura (ADR-0003: el
+    modelo no supone una sola legislatura).
+
+    Limitación verificada: el exportador trae el grupo FINAL de cada diputado con su
+    fecha de alta (p. ej., Belarra: alta en el Mixto el 05/12/2023); los grupos
+    anteriores no constan — la historia completa se puede derivar de los JSON de
+    votación (campo `grupo` votación a votación) si algún día hace falta.
+    """
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    legislatura: str
+    nombre: str = Field(alias="NOMBRE")
+    circunscripcion: str = Field(alias="CIRCUNSCRIPCION")
+    formacion: str = Field(alias="FORMACIONELECTORAL")
+    grupo: str = Field(alias="GRUPOPARLAMENTARIO")
+    fecha_alta: str = Field(alias="FECHAALTA")
+    fecha_condicion_plena: str = Field(default="", alias="FECHACONDICIONPLENA")
+    fecha_alta_grupo: str = Field(default="", alias="FECHAALTAENGRUPOPARLAMENTARIO")
+    fecha_baja: str = Field(default="", alias="FECHABAJA")  # activos: sin baja
+    fecha_baja_grupo: str = Field(default="", alias="FECHABAJAENGRUPOPARLAMENTARIO")
+    biografia: str = Field(default="", alias="BIOGRAFIA")

@@ -1,4 +1,4 @@
-.PHONY: setup ingesta ingesta-legislatura validar exportar test dev tail-logs limpiar
+.PHONY: setup ingesta ingesta-legislatura diputados validar exportar test dev tail-logs limpiar
 
 # Punto de entrada unico para humanos y agentes (Simon Willison / Armin Ronacher).
 # Comandos defensivos: si se usan mal, avisan en vez de romperse.
@@ -18,6 +18,9 @@ ingesta: ## descargar el día de prueba (sesión 202, 30/09/2026) desde la fuent
 
 ingesta-legislatura: ## descargar TODA la legislatura (XV: 147 días, ~2.190 JSON, ~25 min con pausa educada)
 	.venv/bin/congreso ingesta --legislatura $(LEGISLATURA)
+
+diputados: ## descargar exportadores de diputados (activos + bajas) y cargar la tabla en SQLite
+	.venv/bin/congreso diputados --legislatura $(LEGISLATURA)
 
 validar: ## cuadrar TODA la legislatura descargada (recuentos individuales == totales oficiales)
 	.venv/bin/congreso validar --legislatura $(LEGISLATURA)

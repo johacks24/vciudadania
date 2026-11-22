@@ -5,7 +5,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-from .modelo import RegistroVotacion
+from .modelo import Diputado, RegistroVotacion
 
 ESQUEMA = """
 CREATE TABLE IF NOT EXISTS votaciones (
@@ -39,8 +39,23 @@ CREATE TABLE IF NOT EXISTS resumen_grupos (
   si INTEGER NOT NULL, no INTEGER NOT NULL,
   abstencion INTEGER NOT NULL, no_vota INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS diputados (
+  legislatura TEXT NOT NULL,
+  nombre TEXT NOT NULL,
+  circunscripcion TEXT NOT NULL,
+  formacion TEXT NOT NULL,
+  grupo TEXT NOT NULL,
+  fecha_alta TEXT NOT NULL,
+  fecha_condicion_plena TEXT NOT NULL,
+  fecha_alta_grupo TEXT NOT NULL,
+  fecha_baja TEXT NOT NULL,
+  fecha_baja_grupo TEXT NOT NULL,
+  biografia TEXT NOT NULL,
+  PRIMARY KEY (legislatura, nombre)
+);
 CREATE INDEX IF NOT EXISTS idx_votos_votacion ON votos(votacion_id);
 CREATE INDEX IF NOT EXISTS idx_votaciones_fecha ON votaciones(fecha);
+CREATE INDEX IF NOT EXISTS idx_diputados_grupo ON diputados(grupo);
 """
 
 
@@ -80,3 +95,25 @@ def exportar(ficheros: list[Path], destino: Path, legislatura: str) -> list[tupl
     bd.commit()
     bd.close()
     return informe
+
+
+def exportar_diputados(diputados: list[Diputado], destino: Path, legislatura: str) -> int:
+    """Escribe la tabla diputados de esa legislatura (idempotente: solo la suya)."""
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    bd = sqlite3.connect(destino)
+    bd.executescript(ESQUEMA)
+    bd.execute("DELETE FROM diputados WHERE legislatura = ?", (legislatura,))
+    bd.executemany(
+        "INSERT INTO diputados VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        (
+            (
+                d.legislatura, d.nombre, d.circunscripcion, d.formacion, d.grupo,
+                d.fecha_alta, d.fecha_condicion_plena, d.fecha_alta_grupo,
+                d.fecha_baja, d.fecha_baja_grupo, d.biografia,
+            )
+            for d in diputados
+        ),
+    )
+    bd.commit()
+    bd.close()
+    return len(diputados)

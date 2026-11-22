@@ -111,3 +111,9 @@ operativa para el agente, no como nota para el humano. El aprendizaje del proyec
   reject` → `security find-internet-password -s github.com` hasta «could not be
   found») y (2) blindar el comando con `env -u GIT_ASKPASS` para que git pida de
   verdad.**
+- 2026-11-22 (4x4 nº 6, URLs y tests débiles): `urls_diputados()` construyó URLs rotas
+  (una regex con grupo de captura devolvía solo el nombre de fichero) y el test las
+  dio por buenas porque asertaba subcadenas («contiene DiputadosActivos__»); el fallo
+  real apareció al ejecutar (404). **Regla: cuando un test valide una URL generada,
+  la aserción es la URL completa exacta, no subcadenas; y toda regex de extracción se
+  contrasta con la descarga real antes de darla por buena.**

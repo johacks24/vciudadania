@@ -168,5 +168,36 @@ consultado el 22/11):
   documentada «sin voto individual publicado», enlazable al Diario sin extraer el
   PDF (fuera del lote).
 
+## 22/11/2026 · B.4 completada: tabla de diputados de la XV
+
+- **Esquema pydantic `Diputado` antes del código** (regla de AGENTS.md), con los
+  campos reales del exportador, catalogados contra la XV completa antes de validar.
+- Fuente: `congreso.es/es/opendata/diputados`, exportadores «Diputados en Activo» +
+  «De Baja en la legislatura actual». La URL rota a diario con marca temporal: el
+  cliente parsea la página del opendata, `data/raw` guarda el fichero con su marca
+  temporal (inmutable) y la carga toma el más reciente de cada clase.
+- **412 diputados = 137 activos + 275 con baja**, la cifra exacta de quevotan («412
+  diputados distintos»). 213 bajas son del 06/10/2026 (disolución) y 62 personales
+  (renuncias que trajeron suplentes).
+- **Clave natural verificada:** 412 nombres únicos sin duplicados; el formato
+  «Apellidos, Nombre» del exportador es idéntico al campo `diputado` de los JSON de
+  votación → la unión votos↔diputados será por nombre exacto. El exportador no trae
+  código de diputado.
+- **9 grupos con nombre oficial completo** (filas de la tabla): Socialista 157,
+  Popular 152, VOX 33, Plurinacional SUMAR 30, Mixto 11, Junts 8, Republicano 8,
+  Euskal Herria Bildu 7, Vasco (EAJ-PNV) 6. El mapeo código (GS, GP, GVOX…) →
+  nombre queda servido para las fichas.
+- **Limitación declarada:** el exportador trae el grupo FINAL con su fecha de alta
+  (caso real: Belarra, formación SUMAR, grupo Mixto desde el 05/12/2023); la
+  pertenencia anterior no consta. La historia completa por diputado se puede derivar
+  del campo `grupo` de los JSON de votación si algún día hace falta — no en este lote.
+- SQLite: tabla `diputados`, PRIMARY KEY (legislatura, nombre) — ADR-0003: sin suponer
+  una sola legislatura; el borrado es por legislatura, no global. `make diputados`
+  descarga, valida y escribe; re-ejecutar no re-descarga (idempotente, verificado).
+- **4x4 nº 6 resuelto** (lección en AGENTS.md): una regex con grupo de captura
+  construyó URLs rotas y el test las dio por buenas asertando subcadenas; el 404 real
+  apareció al ejecutar. Ahora el test aserta las URLs completas.
+
+
 
 

@@ -9,6 +9,10 @@ lote 01: docs/lotes/20261110_pleno-xv-navegable/notas.md):
   22/11/2026: XV = 147 días (19/09/2023 → 02/10/2026); XIV = 170.
 - Los días con solo votaciones públicas por llamamiento no publican JSON por
   votación (sí un ZIP por sesión): la sesión 203 (02/10/2026) es el caso real.
+- Diputados: congreso.es/es/opendata/diputados publica exportadores con marca
+  temporal diaria (DiputadosActivos__AAAAMMDDHHMMSS.json, DiputadosDeBaja__…):
+  «legislatura actual» al momento de la descarga. La XV (disuelta) aún era la
+  actual el 22/11/2026: 137 activos + 275 de baja = 412.
 """
 
 from __future__ import annotations
@@ -19,7 +23,7 @@ from pathlib import Path
 
 import httpx
 
-from ..modelo import RegistroVotacion
+from ..modelo import Diputado, RegistroVotacion
 
 BASE = "https://www.congreso.es"
 UA = (
@@ -108,3 +112,51 @@ def url_desde_ruta(fichero: Path) -> str:
     """Reconstruye la URL oficial desde la ruta relativa en data/raw."""
     rel = Path(*fichero.parts[fichero.parts.index("raw") + 1 :]) if "raw" in fichero.parts else fichero
     return f"{BASE}/webpublica/opendata/votaciones/{rel.as_posix()}"
+
+
+RE_DIPUTADOS = re.compile(r"webpublica/opendata/diputados/Diputados(?:Activos|DeBaja)__\d+\.json")
+
+
+def urls_diputados() -> list[str]:
+    """URLs de los exportadores de diputados de la legislatura actual (Activos + DeBaja).
+
+    La página publica todos los exportadores con marca temporal diaria; la regex
+    descarta los históricos por legislatura (odsDiputadosNN), el global (Diput__) y
+    el de diputadas de todas las legislaturas (Diputadas__).
+    """
+    r = httpx.get(
+        f"{BASE}/es/opendata/diputados",
+        headers={"User-Agent": UA},
+        timeout=30,
+        follow_redirects=True,
+    )
+    r.raise_for_status()
+    return sorted({f"{BASE}/{m}" for m in RE_DIPUTADOS.findall(r.text)})
+
+
+def ruta_diputados(raiz: Path, legislatura: str, url: str) -> Path:
+    """data/raw/LegXV/diputados/DiputadosActivos__AAAAMMDDHHMMSS.json (inmutable)."""
+    return raiz / "data" / "raw" / f"Leg{legislatura}" / "diputados" / url.rsplit("/", 1)[-1]
+
+
+def cargar_diputados(raiz: Path, legislatura: str) -> list[Diputado]:
+    """Los diputados de la legislatura desde data/raw (activos + bajas), validados.
+
+    De cada clase (Activos, DeBaja) toma el fichero con mayor marca temporal: los
+    exportadores rotan a diario y data/raw es inmutable, así que puede haber más de
+    uno. Falla con nombres duplicados (clave natural verificada única en la XV).
+    """
+    base = raiz / "data" / "raw" / f"Leg{legislatura}" / "diputados"
+    diputados: list[Diputado] = []
+    vistos: set[str] = set()
+    for clase in ("DiputadosActivos__*", "DiputadosDeBaja__*"):
+        ficheros = sorted(base.glob(clase))
+        if not ficheros:
+            raise ValueError(f"falta el exportador {clase} en {base}: ejecuta `make diputados`")
+        for datos in json.loads(ficheros[-1].read_text(encoding="utf-8")):
+            d = Diputado.model_validate({**datos, "legislatura": legislatura})
+            if d.nombre in vistos:
+                raise ValueError(f"diputado duplicado en la Leg{legislatura}: {d.nombre}")
+            vistos.add(d.nombre)
+            diputados.append(d)
+    return diputados
