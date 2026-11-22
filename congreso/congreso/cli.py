@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 
 from .exportar_ficha import generar_fichas
+from .exportar_datos import generar_datos
 from .exportar_portada import (
     N_ESTATICOS,
     generar_indice,
@@ -261,11 +262,13 @@ def cmd_web(args: argparse.Namespace) -> int:
     if antigua.exists():
         antigua.unlink()
     n = generar_fichas(bd, web / "votacion", args.legislatura)
+    json_datos, csv_datos = generar_datos(vots, web / "datos", args.legislatura)
     LOG.info(
         "Portada (index.html): %d votaciones (las %d primeras sin JavaScript) · índice: %s",
         len(vots), min(N_ESTATICOS, len(vots)), indice.relative_to(RAIZ),
     )
     LOG.info("Fichas generadas: %d en %s", n, (web / "votacion").relative_to(RAIZ))
+    LOG.info("Dataset: %s y %s", json_datos.name, csv_datos.name)
     return 0
 
 

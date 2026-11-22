@@ -34,6 +34,7 @@ import sqlite3
 from pathlib import Path
 
 from .fuentes.congresoabierto import CITA as CITA_CONGRESOABIERTO
+from .exportar_datos import CITA_NUESTRA
 
 N_ESTATICOS = 50  # primeros N elementos sin JavaScript (decisión del moldeo)
 POR_LOTE = 50  # cuántos pinta el scroll infinito por tanda
@@ -60,6 +61,13 @@ h1{font-size:22px;margin:0 0 4px}
 #lista .titulo{display:block;font-size:15px;line-height:1.45;margin:2px 0}
 #lista .recuento{display:block;font-size:13px;color:#555}
 #centinela{padding:28px 0;color:#555;font-size:13px;text-align:center}
+.descarga{margin-top:40px;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+.descarga h2{font-size:16px;margin:0 0 8px;color:#555;font-weight:600}
+.descarga ul{margin:8px 0;padding-left:20px}
+.descarga li{margin:4px 0}
+.descarga a{color:#2563eb}
+.cita{font-size:13px;color:#555;margin:8px 0 0}
+.nota{font-size:12px;color:#555;margin:4px 0 0}
 footer{margin-top:40px;font-size:13px;color:#555;border-top:1px solid #e5e7eb;padding-top:16px}
 footer a{color:#2563eb}
 """
@@ -106,6 +114,17 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
 {items}
 </ol>
 <p id="centinela">Cargando más votaciones…</p>
+<section class="descarga">
+<h2>Descarga los datos</h2>
+<p>Toda la legislatura ({n} votaciones) con su cita:</p>
+<ul>
+<li><a href="datos/votaciones.csv">votaciones.csv</a> — una fila por votación, con el
+enlace a su registro oficial</li>
+<li><a href="datos/votaciones.json">votaciones.json</a> — lo mismo, y la cita dentro</li>
+</ul>
+<p class="cita">Cita: {cita} · CC BY-SA 4.0. Temas: {cita_temas} · CC BY 4.0.</p>
+<p class="nota">Cómo se hace y sus límites: <a href="https://github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md">docs/metodo/metodo.md</a>.</p>
+</section>
 <script>
 (function () {{
   var ESTATICOS = {n_estaticos}, LOTE = {por_lote}, PAUSA = {antirrebote};
@@ -221,7 +240,8 @@ def votaciones_recientes(bd: Path, legislatura: str) -> list[dict]:
     con.row_factory = sqlite3.Row
     filas = con.execute(
         "SELECT id, sesion, numero, fecha, titulo, texto_expediente, afavor, en_contra,"
-        " abstenciones, no_votan, sin_voto_individual FROM votaciones WHERE legislatura = ?",
+        " abstenciones, no_votan, sin_voto_individual, fuente_url FROM votaciones"
+        " WHERE legislatura = ?",
         (legislatura,),
     ).fetchall()
     temas: dict[str, list[str]] = {}
@@ -237,6 +257,7 @@ def votaciones_recientes(bd: Path, legislatura: str) -> list[dict]:
             "sin_individual": bool(f["sin_voto_individual"]),
             "temas": sorted(temas.get(f["id"], [])),
             "ficha": f"votacion/{f['id']}.html",
+            "fuente": f["fuente_url"],  # cada dato publicado lleva su enlace oficial
         }
         for f in filas
     ]
@@ -303,6 +324,7 @@ def generar_portada(
             por_lote=POR_LOTE,
             antirrebote=ANTIRREBOTE,
             opciones_tema=opciones,
+            cita=CITA_NUESTRA,
             cita_temas=CITA_CONGRESOABIERTO,
             items="\n".join(_item(v) for v in vots[:N_ESTATICOS]),
         ),

@@ -331,6 +331,27 @@ commit.
 - 4 tests nuevos (estructura del waffle, ficha nominal, ficha no nominal,
   regeneración limpia) → 41/41.
 
+## 23/11/2026 · D.1 completada: dataset descargable con su cita
+
+- `make web` genera ahora también **`web/datos/votaciones.json` (1,3 MB) y
+  `votaciones.csv` (920 KB)**: una fila por votación con qué se votó (título y
+  expediente), totales oficiales, temas, marca de «voto individual» (2 no
+  nominales) y **el enlace a su registro oficial en cada fila** — 2.175 filas, 0
+  sin fuente. El dataset de votos individuales por diputado queda para la apuesta
+  «API pública v1» (no-objetivo del lote, como marca la tarea).
+- **El JSON es autodescriptivo**: legislatura, n, cita, licencias y fuente van
+  dentro; el CSV se cita solo por fila y la portada lleva la sección «Descarga los
+  datos» con la cita completa (la nuestra CC BY-SA 4.0 y la de los temas de
+  CongresoAbierto CC BY 4.0) y el enlace al método.
+- **Artefactos deterministas:** sin fecha de generación — la XV es un corpus
+  cerrado y regenerar no debe cambiar nada (verificado en la práctica: al
+  regenerar la web, las 2.175 fichas ni se tocaron; el versionado es el del repo).
+- El índice de la portada gana el campo `fuente` por votación: cada dato publicado
+  lleva su enlace oficial, también el que viaja en el navegador.
+- 3 tests nuevos (JSON autodescriptivo, CSV íntegro con quoting, portada con la
+  sección de descarga) → 44/44.
+
+
 
 
 

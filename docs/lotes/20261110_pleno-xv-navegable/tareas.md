@@ -118,8 +118,14 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 ## Scope D — Dataset descargable
 
-- [ ] D.1 Export JSON + CSV de la XV con cita y método de reutilización (recorrido 4;
+- [x] D.1 Export JSON + CSV de la XV con cita y método de reutilización (recorrido 4;
       la API documentada de la apuesta «API pública v1» sigue siendo no-objetivo)
+      — *hecha el 23/11: `web/datos/votaciones.json` (1,3 MB, autodescriptivo con
+      cita y licencias dentro) y `votaciones.csv` (920 KB, 2.175 filas, **todas con
+      su enlace oficial**); sección «Descarga los datos» en la portada con la cita
+      completa (CC BY-SA 4.0 nuestra + CC BY 4.0 de los temas de CongresoAbierto) y
+      enlace al método; artefactos deterministas sin fecha (regenerar no toca las
+      fichas: verificado); el índice gana `fuente` por votación; 44/44 tests*
 
 ## Scope E — Producción y cierre
 
