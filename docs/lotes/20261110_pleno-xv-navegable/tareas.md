@@ -12,10 +12,14 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 ## Scope A — Análisis previo (obligatorio antes de los detalles)
 
-- [ ] A.1 Informe del ecosistema: **holapolitica** y **quevotan** con el checklist del
+- [x] A.1 Informe del ecosistema: **holapolitica** y **quevotan** con el checklist del
       lote 00 (licencia, actividad, cobertura XV, calidad/validación, datos/API,
       comunidad) + qué adoptar, qué evitar y qué mueve el buscador y las afinidades
-      → `informe-ecosistema.md`
+      → `informe-ecosistema.md` — *hecha el 22/11: ambos vivos y alineados con la
+      validación nominal-vs-totales; XV disuelta (corpus cerrado de 2.189 votaciones
+      según quevotan); el alcance del lote se confirma sin cambios y las
+      implicaciones quedan en el informe (contraste de totales como tercera barrera,
+      afinidades diferenciadas por experiencia, no por existencia)*
 - [ ] A.2 ADR-0007 «color de los grupos parlamentarios» con la decisión documentada
       (mientras tanto rige lo provisional de `docs/diseno.md`: un solo color neutro)
 

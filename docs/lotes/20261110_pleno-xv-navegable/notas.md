@@ -44,3 +44,14 @@ arranca «En exploración»):
 La apuesta pasa a **desarrollo** en `docs/apuestas.md` (única fuente de verdad del
 estado). El análisis previo obligatorio del plan (riesgo 4) se ejecuta como tarea A.1
 → `informe-ecosistema.md`.
+
+## 22/11/2026 · A.1 completada: informe del ecosistema
+
+- Ambos proyectos analizados con el checklist del lote 00 y verificación cruzada
+  (sesión 202 y última votación cuadran con nuestro spike y con el índice oficial).
+  Detalle y evidencias en `informe-ecosistema.md`.
+- Conclusiones operativas: el alcance del lote **no cambia**; quevotan y
+  CongresoAbierto servirán como contraste de totales en B.3; los temas de
+  CongresoAbierto alimentan el filtro por tema (C.3) con atribución y validación;
+  la XVI (post 29/11/2026) no entra en este lote.
+
