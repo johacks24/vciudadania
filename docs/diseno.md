@@ -11,9 +11,9 @@ pantalla sale distinta. Estas reglas aplican a todo lo visual del proyecto.
    fuente), no entra en pantalla.
 2. **Lenguaje claro**: titulares en lengua ciudadana, nunca jerga sin glosario inline
    («convalidación» → explicada al pasar).
-3. **Neutralidad**: sin eslóganes, sin adjetivos valorativos, sin colores de partido.
-   El uso de color por grupo parlamentario está **pendiente de ADR** (lote 01); mientras
-   tanto, un solo color neutro para todo.
+3. **Neutralidad**: sin eslóganes, sin adjetivos valorativos, sin recomendación de voto.
+   El color por grupo existe **solo como codificación visual en el recuento de la ficha**
+   (ADR-0007), nunca como valoración ni fuera de ese contexto.
 4. **Móvil primero**: se diseña a 375 px y se ensancha.
 5. **Sin registro, sin tracking**: lo que el usuario responda (juego) queda en su navegador.
 
@@ -34,3 +34,25 @@ pantalla sale distinta. Estas reglas aplican a todo lo visual del proyecto.
 
 - Ordenadas por nº de escaños, descendente. El Grupo Mixto va aparte, al final.
 - Siempre con el enlace a la fuente oficial debajo.
+
+## Recuento visual de la ficha (waffle)
+
+Reglas operativas de la vista simplificada del pleno (decisión y paleta: ADR-0007).
+
+- **Una celda por diputado** con voto nominal; relleno = color del grupo (paleta en
+  ADR-0007, contraste ≥ 3:1 sobre blanco). Celdas de ~12 px a 375 px; SVG estático
+  generado, sin JavaScript.
+- **El voto se lee por posición**: secciones Sí / No / Abstención / No vota, cada una
+  con cabecera de color de sentido + número. El color de la celda nunca codifica el
+  voto.
+- **Dentro de cada sección**: bloques por grupo ordenados por nº de diputados del
+  grupo en esa votación (como la tabla «voto por grupo» de debajo); el Grupo Mixto
+  siempre al final; separación visible entre bloques.
+- **Sin texto dentro de las celdas**: la sigla vive en la leyenda (chip + sigla +
+  nombre, en el mismo orden que los bloques) y el detalle por diputado aparece a
+  demanda (`title`/`aria-label`: «Nombre (Grupo): voto»).
+- **Color redundante, nunca único**: la tabla «voto por grupo» de debajo conserva todo
+  el dato en texto para lectoras de pantalla y personas daltónicas.
+- **Votaciones sin voto individual publicado**: sin waffle; solo totales.
+- Lectura esperada: grupo unido = un bloque en una sección; grupo dividido = su color
+  repartido en varias secciones.

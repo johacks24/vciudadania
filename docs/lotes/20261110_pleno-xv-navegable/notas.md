@@ -55,3 +55,29 @@ estado). El análisis previo obligatorio del plan (riesgo 4) se ejecuta como tar
   CongresoAbierto alimentan el filtro por tema (C.3) con atribución y validación;
   la XVI (post 29/11/2026) no entra en este lote.
 
+## 22/11/2026 · Dirección de diseño del humano + A.2 (ADR-0007)
+
+El humano dirigió el diseño del recuento visual antes de ejecutar A.2 (quedó en
+`docs/decisiones/0007-color-grupos.md` y en `docs/diseno.md`):
+
+- **Neutralidad ≠ ocultar datos:** mostrar qué votó cada grupo es un dato; la pregunta
+  del color no es ideológica sino funcional: ¿en qué interfaz trabaja?
+- **Recuento visual = waffle aprobado:** una celda por diputado, color de grupo, voto
+  por posición (secciones). Descartadas las codificaciones de doble canal por celda
+  (contorno de voto o barra en mitades): ilegibles a ~12 px y doblan el problema
+  daltónico. Sin siglas dentro de las celdas (ilegibles); leyenda + orden fijo +
+  detalle a demanda.
+- **Listado sin paginación:** carga automática al llegar al final de la página
+  (scroll infinito) sobre el índice JSON de C.2; los primeros N sin JavaScript.
+- **Sin hemiciclo literal:** el campo `asiento` se conserva en los datos (fidelidad a
+  la fuente) pero no se muestra. «Lo que me interesa es qué votó cada grupo y cómo
+  acordaron» — el waffle ordena por sentido del voto y por grupo, y hace visible la
+  disciplina (bloque unido = grupo unido).
+- **Paleta (evidencia del método):** base `grupos.yaml` de quevotan (AGPL-3.0, misma
+  licencia); comprobación WCAG de contraste sobre blanco con la fórmula de luminancia
+  relativa; 4 colores cumplen ≥ 3:1 tal cual y 5 se oscurecen por matiz hasta
+  cumplirlo (Vox, ERC, Junts, EH Bildu, Mixto). Limitación declarada en la ADR: la
+  luminancia no separa todos los pares para daltonía (Junts/EH Bildu ≈ 0.29), así que
+  la garantía es la redundancia (posición + leyenda + texto), no la paleta.
+
+A.2 completada; C.1 y C.4 actualizadas con esta dirección.

@@ -20,8 +20,14 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       según quevotan); el alcance del lote se confirma sin cambios y las
       implicaciones quedan en el informe (contraste de totales como tercera barrera,
       afinidades diferenciadas por experiencia, no por existencia)*
-- [ ] A.2 ADR-0007 «color de los grupos parlamentarios» con la decisión documentada
+- [x] A.2 ADR-0007 «color de los grupos parlamentarios» con la decisión documentada
       (mientras tanto rige lo provisional de `docs/diseno.md`: un solo color neutro)
+      — *hecha el 22/11: decisión funcional con dirección del humano — color de grupo
+      SOLO en el recuento visual de la ficha (waffle: celda por diputado, voto por
+      posición, color redundante con leyenda y alternativa textual); paleta de quevotan
+      (AGPL-3.0) oscurecida a contraste ≥ 3:1 sobre blanco; sin hemiciclo literal y sin
+      siglas en celdas. En esta misma sesión se registró la dirección de diseño: C.1
+      pasa a scroll infinito y C.4 incorpora el waffle (notas.md)*
 
 ## Scope B — Ingesta XV completa (el corazón de datos)
 
@@ -41,14 +47,17 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 ## Scope C — Buscador y fichas (la web navegable)
 
-- [ ] C.1 Portada índice: las votaciones más recientes primero, paginadas
-      (recorrido 1)
+- [ ] C.1 Portada índice: las votaciones más recientes primero, con carga automática
+      al llegar al final de la página (scroll infinito) sobre el índice JSON de C.2;
+      los primeros N sin JavaScript (recorrido 1)
 - [ ] C.2 Búsqueda por palabra y filtro por resultado con índice JSON compacto
       filtrado en cliente (decisión en `notas.md`; ADR-0002)
 - [ ] C.3 Tema por votación: importar los temas de CongresoAbierto (CC BY 4.0) con
       atribución y validación nuestra (ADR-0005.3) → filtro por tema (recorrido 2)
-- [ ] C.4 Ficha por votación para toda la XV (~2.190 fichas: qué se votó, recuento,
-      voto por grupo, fuente oficial; recorrido 3) — generador del lote 00 escalado
+- [ ] C.4 Ficha por votación para toda la XV (~2.190 fichas: qué se votó, recuento
+      con waffle por diputado — ADR-0007: celda de color de grupo, voto por posición,
+      alternativa textual —, voto por grupo, fuente oficial; recorrido 3) — generador
+      del lote 00 escalado
 
 ## Scope D — Dataset descargable
 
