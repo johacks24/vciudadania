@@ -304,6 +304,34 @@ commit.
   Derogado 12) **no se adopta**: mantenemos los recuentos honestos de la ficha.
 - 5 tests nuevos (fixture de 2 filas reales de su CSV) → 37/37.
 
+## 23/11/2026 · C.4 completada: fichas de toda la XV con waffle + portada promovida
+
+- `make web` genera ahora la web completa en 3 s: **portada promovida a
+  `index.html`** (la ficha del lote 00 queda sustituida por la portada con
+  buscador; `portada.html` retirada), el índice y **2.175 fichas** en
+  `web/votacion/<id>.html` (102 MB; comparable al ~90 MB de quevotan).
+- Cada ficha (recorrido 3): qué se votó (título + expediente + tema con
+  atribución CC BY 4.0), recuento honesto («Más No que Sí», sin veredictos),
+  **waffle según la ADR-0007** (una celda por diputado, relleno con el color del
+  grupo, voto por posición en secciones Sí/No/Abstención/No vota con su número,
+  detalle por diputado a demanda en el `<title>` del rectángulo, leyenda
+  chip+sigla+nombre en el orden fijo de bloques con el Mixto al final), la tabla
+  «voto por grupo» completa en texto (el color es redundante, nunca único) y la
+  fuente oficial enlazada. SVG estático, sin JavaScript.
+- **Sin voto individual (los 2 suplicatorios):** sin waffle ni tabla; totales +
+  nota de categoría, con su fuente enlazada igualmente.
+- Verificación con la lección nº 7 aplicada: enlaces de fuente de 4 fichas con
+  sesiones de 1, 2 y 3 dígitos (Leg2-001, Leg89-005, Leg98-021, Leg202-010) →
+  **HTTP 200**; integridad del waffle contra la base: 350 celdas = 350 votos
+  nominales, y las secciones reproducen los totales oficiales (34/312/0/4 en la
+  202-010; 176/169/2/3 en la 2-001, la primera votación de la XV).
+- El modo sesión de `exportar` deja de escribir la web (solo SQLite de esa
+  sesión): `make web` es el único generador del sitio y regenera el directorio
+  de fichas completo (sin huérfanas).
+- 4 tests nuevos (estructura del waffle, ficha nominal, ficha no nominal,
+  regeneración limpia) → 41/41.
+
+
 
 
 

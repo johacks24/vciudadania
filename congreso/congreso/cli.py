@@ -8,7 +8,7 @@ import sys
 import time
 from pathlib import Path
 
-from .exportar_ficha import generar as generar_ficha
+from .exportar_ficha import generar_fichas
 from .exportar_portada import (
     N_ESTATICOS,
     generar_indice,
@@ -170,14 +170,11 @@ def cmd_exportar(args: argparse.Namespace) -> int:
     informe = exportar_sqlite(ficheros, destino, args.legislatura)
     malas = [i for i, ok in informe if not ok]
     LOG.info("SQLite: %d votaciones (%d con descuadre marcado).", len(informe), len(malas))
-    if args.sesion:
-        # La web completa de la XV (portada, buscador, ~2.190 fichas) llega en C;
-        # en modo sesión se mantiene la ficha del lote 00.
-        ficha = generar_ficha(ficheros, RAIZ / "web" / "index.html", args.legislatura)
-        LOG.info("Ficha generada: %s", ficha.relative_to(RAIZ))
-    else:
+    if not args.sesion:
         n = exportar_diputados(diputados, destino, args.legislatura)
         LOG.info("SQLite Leg%s completa: %d votaciones + %d diputados.", args.legislatura, len(informe), n)
+    else:
+        LOG.info("La web se genera aparte: `make web` (portada en index.html + fichas).")
     return 0
 
 
@@ -257,12 +254,18 @@ def cmd_web(args: argparse.Namespace) -> int:
         LOG.warning("Sin temas: ejecuta `make temas` para que el filtro por tema tenga opciones.")
     web = RAIZ / "web"
     indice = generar_indice(vots, web / "indice.json", args.legislatura)
-    portada = generar_portada(vots, web / "portada.html", args.legislatura, temas)
+    # Promoción decidida en C.1: la portada pasa a index.html y sustituye a la ficha
+    # del lote 00; su antigua ubicación portada.html se retira.
+    portada = generar_portada(vots, web / "index.html", args.legislatura, temas)
+    antigua = web / "portada.html"
+    if antigua.exists():
+        antigua.unlink()
+    n = generar_fichas(bd, web / "votacion", args.legislatura)
     LOG.info(
-        "Portada: %d votaciones (las %d primeras sin JavaScript) · índice: %s",
+        "Portada (index.html): %d votaciones (las %d primeras sin JavaScript) · índice: %s",
         len(vots), min(N_ESTATICOS, len(vots)), indice.relative_to(RAIZ),
     )
-    LOG.info("Generada: %s", portada.relative_to(RAIZ))
+    LOG.info("Fichas generadas: %d en %s", n, (web / "votacion").relative_to(RAIZ))
     return 0
 
 

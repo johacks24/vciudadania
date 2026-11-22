@@ -103,10 +103,18 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       299 multi-tema); filtro por tema combinable con palabra y resultado, con la
       cuenta en cada opción; degradación sin tabla; su columna `resultado` no se
       adopta; 37/37 tests*
-- [ ] C.4 Ficha por votación para toda la XV (~2.190 fichas: qué se votó, recuento
+- [x] C.4 Ficha por votación para toda la XV (~2.190 fichas: qué se votó, recuento
       con waffle por diputado — ADR-0007: celda de color de grupo, voto por posición,
       alternativa textual —, voto por grupo, fuente oficial; recorrido 3) — generador
       del lote 00 escalado
+      — *hecha el 23/11: **2.175 fichas** en `web/votacion/` (102 MB) con el waffle
+      de la ADR-0007 (celda por diputado con color de grupo, secciones por sentido
+      con su número, detalle a demanda, leyenda en orden fijo, Mixto al final) y la
+      tabla por grupo en texto; suplicatorios sin waffle (totales + nota);
+      **portada promovida a index.html** (la ficha del lote 00 queda sustituida);
+      fuente verificada con HTTP 200 en sesiones de 1, 2 y 3 dígitos y waffle
+      contrastado con la base (350 celdas = 350 votos; secciones = totales
+      oficiales); 41/41 tests*
 
 ## Scope D — Dataset descargable
 

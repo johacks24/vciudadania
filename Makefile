@@ -34,7 +34,7 @@ exportar: ## generar data/processed/congreso.sqlite y la ficha web/index.html (s
 exportar-legislatura: ## generar la SQLite completa de la legislatura (votaciones, votos, resúmenes y diputados)
 	.venv/bin/congreso exportar --legislatura $(LEGISLATURA)
 
-web: ## generar portada + índice JSON de la legislatura desde la base (scroll infinito; fichas en C.4)
+web: ## generar la web de la legislatura: portada (index.html) + índice + fichas de cada votación
 	.venv/bin/congreso web --legislatura $(LEGISLATURA)
 
 test: ## suite de tests
