@@ -4,11 +4,12 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 ## Estado vivo
 
-- **En exploración:** ninguna. Los «cómo» abiertos al moldear quedaron resueltos y
-  documentados en `notas.md` (corpus cerrado → ingesta única; búsqueda estática en
-  cliente; temas de CongresoAbierto con validación; categorías sin voto individual;
-  tabla de diputados propia).
-- **En construcción:** todas las tareas de los scopes A–E, de arriba abajo.
+- **En exploración:** ninguna.
+- **En construcción:** ninguna. Lote 01 cerrado el 23/11/2026: la XV completa
+  (2.175 votaciones, 760.518 votos) navegable en
+  `https://johacks24.github.io/vciudadania/`, validación 100 % y dataset con su
+  cita; apuesta a **producción** en `docs/apuestas.md`. Siguiente: cooldown —
+  revisar `docs/aprender.md` y `docs/apuestas.md` y moldear la elegida.
 
 ## Scope A — Análisis previo (obligatorio antes de los detalles)
 
@@ -136,5 +137,13 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       verde en cada commit del lote; `make validar` re-verificado hoy: 2.175
       (2.173 nominales == totales oficiales + 2 suplicatorios), 0 descuadres, 0
       duplicadas; la validación es la puerta de publicación*
-- [ ] E.2 Despliegue en Pages verificado (HTTP 200, recorridos 1–4) y apuesta a
+- [x] E.2 Despliegue en Pages verificado (HTTP 200, recorridos 1–4) y apuesta a
       producción en `docs/apuestas.md` + commits limpios por scope
+      — *hecha el 23/11: verificado con peticiones reales — portada, índice, fichas
+      de sesiones de 1, 2 y 3 dígitos y dataset (JSON + CSV), todo **HTTP 200 y byte
+      a byte idéntico al commit** (`cmp` contra `web/`): lo servido ES la versión
+      de D.1, no un despliegue viejo (lección nº 7 aplicada al despliegue);
+      recorridos 1–4 comprobados sobre el sitio servido; puerta de publicación
+      re-verificada (`make validar`: 2.175, 0 descuadres, 0 duplicadas; 44/44
+      tests); corregido `web/README.md` (describía la web del lote 00 y un comando
+      que ya no genera la web); 16 commits, uno por tarea; apuesta a **producción***

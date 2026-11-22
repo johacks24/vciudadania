@@ -370,6 +370,39 @@ commit.
 - 44/44 en local y **CI verde en cada commit del lote** hasta hoy; este mismo
   commit vuelve a demostrarlo.
 
+## 23/11/2026 · E.2 completada: despliegue verificado y lote cerrado
+
+**Verificación del despliegue en Pages con peticiones reales** (la lección nº 7
+aplicada al despliegue: que el fichero exista en la URL no basta; debe resolver Y
+ser la versión actual):
+
+- **HTTP 200** en todo el arsenal: portada (`/` e `index.html`), `indice.json`,
+  fichas de sesiones de 1, 2 y 3 dígitos (Leg2-001, Leg89-005, Leg98-021,
+  Leg202-010/021) y dataset (`datos/votaciones.json` y `.csv`).
+- **Byte a byte idénticos al commit** (`cmp` contra `web/`): lo servido es la
+  versión de D.1 (portada con «Descarga los datos», índice con `fuente`/`temas`,
+  fichas con waffle y fuente oficial corregida Leg15/Sesion202), no un despliegue
+  viejo del lote 00. El flujo «Paginas» (`paginas.yml`) despliega `web/` en cada
+  push a main que toca `web/**`; el despliegue estaba al día sin intervención.
+- **Recorridos 1–4 sobre el sitio servido:** (1) la portada abre con las
+  votaciones más recientes (Leg202-021 la primera; 50 estáticas sin JavaScript,
+  scroll infinito con botón de respaldo); (2) buscador y filtros cargan su índice
+  de 2.175 items con `expediente`, `temas` y `fuente`; (3) la ficha muestra waffle
+  + tabla por grupo + fuente oficial; (4) «Descarga los datos» enlaza el JSON
+  autodescriptivo (cita, licencias y fuente dentro) y el CSV.
+- **Puerta de publicación re-verificada antes de cerrar:** `make validar` →
+  2.175 votaciones (2.173 nominales == totales oficiales, 2 suplicatorios),
+  0 descuadres, 0 duplicadas; `make test` → 44/44.
+- **Corrección menor en producción:** `web/README.md` describía la web del lote 00
+  («la ficha pública», generada con `make exportar`) y un comando que desde C.4 ya
+  no escribe la web; reescrito con el contenido real (portada, índice, fichas,
+  dataset) y la secuencia de dependencias verificada en el CLI (ingesta →
+  diputados → validar → exportar → temas → web). El generador no lo toca.
+- **Lote cerrado:** 16 commits del moldeo a E.2, uno por tarea (perfect commit:
+  código + test + doc); la apuesta pasa a **producción** en `docs/apuestas.md`
+  (desplegada, validada y pública). Siguiente: cooldown — revisar
+  `docs/aprender.md` y `docs/apuestas.md` y moldear la siguiente apuesta.
+
 
 
 
