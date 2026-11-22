@@ -351,6 +351,26 @@ commit.
 - 3 tests nuevos (JSON autodescriptivo, CSV íntegro con quoting, portada con la
   sección de descarga) → 44/44.
 
+## 23/11/2026 · E.1 completada: CI verde sin red y validación de la XV al 100 %
+
+- **Qué ejecuta la CI** (`.github/workflows/ci.yml`): Python 3.11,
+  `pip install -e "congreso[dev]"` y `pytest congreso -q` en cada push y pull
+  request. La suite (**44 tests**) es **sin red por construcción**: los datos son
+  fixtures reales commiteados (la votación 010 completa de la sesión 202, los
+  exportadores de diputados, recortes de las páginas del opendata y 2 filas del
+  CSV de CongresoAbierto) y las 4 llamadas HTTP de los tests están interceptadas
+  (monkeypatch de `httpx.get` en test_fuentes y test_diputados); la descarga del
+  CSV en test_temas se salta por idempotencia (el fichero ya está). Ningún test
+  depende de congreso.es ni de congresoabierto.org.
+- **`make validar` sobre la XV completa, re-verificado hoy:** 2.175 votaciones —
+  2.173 con recuento individual == totales oficiales, 2 no nominales
+  (suplicatorios), **0 descuadres, 0 duplicadas** (1,3 s). El método y el contraste
+  con el ecosistema, en la entrada de B.3. La regla de publicación: la validación
+  es la puerta — un descuadre bloquea la salida (código 1).
+- 44/44 en local y **CI verde en cada commit del lote** hasta hoy; este mismo
+  commit vuelve a demostrarlo.
+
+
 
 
 

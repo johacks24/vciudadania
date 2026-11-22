@@ -129,7 +129,12 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
 
 ## Scope E — Producción y cierre
 
-- [ ] E.1 CI verde (tests sin red, con fixture) y `make validar` al 100 % sobre la XV
+- [x] E.1 CI verde (tests sin red, con fixture) y `make validar` al 100 % sobre la XV
       completa documentado en `notas.md`
+      — *hecha el 23/11: suite de 44 tests sin red por construcción (fixtures
+      reales + 4 llamadas HTTP interceptadas + descarga idempotente del CSV), CI
+      verde en cada commit del lote; `make validar` re-verificado hoy: 2.175
+      (2.173 nominales == totales oficiales + 2 suplicatorios), 0 descuadres, 0
+      duplicadas; la validación es la puerta de publicación*
 - [ ] E.2 Despliegue en Pages verificado (HTTP 200, recorridos 1–4) y apuesta a
       producción en `docs/apuestas.md` + commits limpios por scope
