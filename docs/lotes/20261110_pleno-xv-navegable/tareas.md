@@ -87,8 +87,14 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       con botón de respaldo); generada desde la SQLite de B.5; vive en portada.html
       hasta que C.4 la promueva a index.html (producción del lote 00 intacta);
       28/28 tests*
-- [ ] C.2 Búsqueda por palabra y filtro por resultado con índice JSON compacto
+- [x] C.2 Búsqueda por palabra y filtro por resultado con índice JSON compacto
       filtrado en cliente (decisión en `notas.md`; ADR-0002)
+      — *hecha el 23/11: búsqueda en cliente sobre título + expediente (medido:
+      «alquiler» no está en ningún título pero sí en 14 expedientes; «vivienda»,
+      71) con acentos normalizados y antirrebote de 150 ms; filtro honesto por
+      recuento —Más Sí que No / Más No que Sí / Empate: 993 · 1.163 · 19 en la XV—
+      calculado en vivo (el índice no guarda veredicto); índice a 1,0 MB; contador
+      aria-live y estado vacío; 31/31 tests*
 - [ ] C.3 Tema por votación: importar los temas de CongresoAbierto (CC BY 4.0) con
       atribución y validación nuestra (ADR-0005.3) → filtro por tema (recorrido 2)
 - [ ] C.4 Ficha por votación para toda la XV (~2.190 fichas: qué se votó, recuento

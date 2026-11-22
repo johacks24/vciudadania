@@ -98,3 +98,43 @@ def test_portada_escapa_el_html_de_la_fuente(tmp_path):
     assert "<script>x" not in pagina
     assert "&lt;script&gt;x&lt;/script&gt;" in pagina
     assert "&quot;comillas&quot;" in pagina
+
+
+def test_portada_tiene_busqueda_y_filtro_de_resultado(tmp_path):
+    """C.2: buscador por palabra y filtro honesto por recuento, todo en cliente."""
+    vots = votaciones_recientes(_base_con_dos(tmp_path), "XV")
+    pagina = generar_portada(vots, tmp_path / "portada.html", "XV").read_text(encoding="utf-8")
+    assert '<input id="q" type="search"' in pagina
+    assert 'placeholder="p. ej., alquiler"' in pagina  # el ejemplo del recorrido 2
+    assert '<select id="filtro">' in pagina
+    for opcion in (
+        '<option value="todos">Todos</option>',
+        '<option value="si">Más Sí que No</option>',
+        '<option value="no">Más No que Sí</option>',
+        '<option value="empate">Empate</option>',
+    ):
+        assert opcion in pagina
+    assert 'aria-live="polite"' in pagina  # contador de resultados accesible
+    assert "mayorías son cualificadas" in pagina  # aviso honesto del filtro
+    assert ".normalize('NFD')" in pagina  # «convalidacion» encuentra «Convalidación»
+    assert "setTimeout" in pagina  # antirrebote al teclear
+
+
+def test_el_indice_no_almacena_veredictos(tmp_path):
+    """El filtro se calcula en vivo: el índice solo lleva recuentos oficiales."""
+    vots = votaciones_recientes(_base_con_dos(tmp_path), "XV")
+    j = json.loads(generar_indice(vots, tmp_path / "indice.json", "XV").read_text(encoding="utf-8"))
+    claves = set(j["votaciones"][0])
+    assert claves >= {"si", "no", "abst", "expediente"}
+    assert "resultado" not in claves  # sin campo veredicto: honestidad por diseño
+
+
+def test_la_busqueda_cubre_titulo_y_expediente(tmp_path):
+    """«alquiler» no está en ningún título de la XV pero sí en expedientes: el índice los lleva."""
+    vots = votaciones_recientes(_base_con_dos(tmp_path), "XV")
+    j = json.loads(generar_indice(vots, tmp_path / "indice.json", "XV").read_text(encoding="utf-8"))
+    assert all("expediente" in v for v in j["votaciones"])
+    pagina = generar_portada(vots, tmp_path / "portada.html", "XV").read_text(encoding="utf-8")
+    assert "v.titulo + ' ' + v.expediente" in pagina  # el cliente busca en ambos
+    # y la lista sigue mostrando solo el título (compacta)
+    assert pagina.count('<span class="titulo">') == len(vots)

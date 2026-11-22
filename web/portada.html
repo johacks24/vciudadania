@@ -10,7 +10,14 @@
 body{margin:0;font:16px/1.6 system-ui,sans-serif;color:#111;background:#fff}
 main{max-width:720px;margin:0 auto;padding:24px 16px 64px}
 h1{font-size:22px;margin:0 0 4px}
-.lead{color:#555;margin:0 0 20px;font-size:14px}
+.lead{color:#555;margin:0 0 16px;font-size:14px}
+.busqueda{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 4px}
+.busqueda label{font-size:12px;color:#555;display:block;margin:0 0 3px}
+.busqueda input,.busqueda select{font:inherit;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111}
+.busqueda .campo{flex:1 1 220px}
+.busqueda .campo input{width:100%}
+#contador{font-size:13px;color:#555;margin:8px 0 0}
+.nota{font-size:12px;color:#555;margin:4px 0 14px}
 #lista{list-style:none;margin:0;padding:0}
 #lista li{border-bottom:1px solid #f0f0f0}
 #lista a{display:block;padding:12px 2px;text-decoration:none;color:#111}
@@ -27,6 +34,24 @@ footer a{color:#2563eb}
 <h1>vCiudadania</h1>
 <p class="lead">Legislatura XV · 2175 votaciones del Pleno · recuentos validados
 contra los totales oficiales. Se listan de la más reciente a la más antigua.</p>
+<div class="busqueda">
+  <div class="campo">
+    <label for="q">Buscar por palabra</label>
+    <input id="q" type="search" placeholder="p. ej., alquiler" autocomplete="off">
+  </div>
+  <div class="campo">
+    <label for="filtro">Resultado</label>
+    <select id="filtro">
+      <option value="todos">Todos</option>
+      <option value="si">Más Sí que No</option>
+      <option value="no">Más No que Sí</option>
+      <option value="empate">Empate</option>
+    </select>
+  </div>
+</div>
+<p id="contador" aria-live="polite">2175 votaciones</p>
+<p class="nota">La búsqueda necesita JavaScript. El filtro compara recuentos: no dice
+si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
 <ol id="lista">
 <li><a href="votacion/Leg202-021.html"><span class="fecha">30/9/2026</span><span class="titulo">Dictámenes de la Comisión del Estatuto.</span><span class="recuento">340 Sí · 0 No · 0 Abst. · votación no nominal (solo totales)</span></a></li>
 <li><a href="votacion/Leg202-020.html"><span class="fecha">30/9/2026</span><span class="titulo">Dictámenes de la Comisión del Estatuto.</span><span class="recuento">343 Sí · 1 No · 2 Abst.</span></a></li>
@@ -82,10 +107,34 @@ contra los totales oficiales. Se listan de la más reciente a la más antigua.</
 <p id="centinela">Cargando más votaciones…</p>
 <script>
 (function () {
-  var ESTATICOS = 50, LOTE = 50;
+  var ESTATICOS = 50, LOTE = 50, PAUSA = 150;
   var lista = document.getElementById('lista');
   var centinela = document.getElementById('centinela');
-  var votaciones = null, i = ESTATICOS, obs = null;
+  var contador = document.getElementById('contador');
+  var q = document.getElementById('q');
+  var filtro = document.getElementById('filtro');
+  var todos = null, vista = [], i = 0, obs = null, temporizador = null;
+  function normaliza(s) {
+    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+  function categoria(v) {
+    return v.si > v.no ? 'si' : (v.no > v.si ? 'no' : 'empate');
+  }
+  function calculaVista() {
+    var texto = normaliza(q.value).trim(), cat = filtro.value;
+    vista = todos.filter(function (v) {
+      if (cat !== 'todos' && categoria(v) !== cat) return false;
+      return !texto || normaliza(v.titulo + ' ' + v.expediente).indexOf(texto) !== -1;
+    });
+  }
+  function resumen() {
+    var total = vista.length, texto = q.value.trim();
+    if (!texto && filtro.value === 'todos') return total + ' votaciones';
+    var r = total + (total === 1 ? ' resultado' : ' resultados');
+    if (texto) r += ' para «' + texto + '»';
+    if (filtro.value !== 'todos') r += ' · ' + filtro.options[filtro.selectedIndex].text;
+    return r;
+  }
   function pinta(v) {
     var li = document.createElement('li'), a = document.createElement('a');
     a.href = v.ficha;
@@ -102,17 +151,34 @@ contra los totales oficiales. Se listan de la más reciente a la más antigua.</
     lista.appendChild(li);
   }
   function carga() {
-    if (!votaciones) return;
-    var fin = Math.min(i + LOTE, votaciones.length);
-    for (; i < fin; i++) pinta(votaciones[i]);
-    if (i >= votaciones.length) {
-      centinela.textContent = 'Fin: ' + votaciones.length + ' votaciones.';
+    if (!todos) return;
+    var fin = Math.min(i + LOTE, vista.length);
+    for (; i < fin; i++) pinta(vista[i]);
+    contador.textContent = resumen();
+    if (i >= vista.length) {
+      centinela.textContent = vista.length ? 'Fin: ' + resumen() + '.' : 'Sin resultados para esa búsqueda.';
       if (obs) obs.disconnect();
     }
   }
+  function reinicia() {
+    if (!todos) return;
+    lista.textContent = '';
+    i = 0;
+    calculaVista();
+    if (obs) { obs.disconnect(); obs.observe(centinela); }
+    carga();
+  }
+  q.addEventListener('input', function () {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(reinicia, PAUSA);
+  });
+  filtro.addEventListener('change', reinicia);
   fetch('indice.json').then(function (r) { return r.json(); }).then(function (j) {
-    votaciones = j.votaciones;
-    if (i >= votaciones.length) { carga(); return; }
+    todos = j.votaciones;
+    calculaVista();
+    i = ESTATICOS;
+    contador.textContent = resumen();
+    if (i >= vista.length) { carga(); return; }
     if ('IntersectionObserver' in window) {
       obs = new IntersectionObserver(function (entradas) {
         if (entradas.some(function (e) { return e.isIntersecting; })) carga();

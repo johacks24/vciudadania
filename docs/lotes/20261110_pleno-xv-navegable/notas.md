@@ -240,6 +240,27 @@ consultado el 22/11):
 - 5 tests nuevos (`test_portada.py`): orden, contrato del índice, primeros sin
   JavaScript, límite de N estáticos, escape de HTML → 28/28.
 
+## 23/11/2026 · C.2 completada: búsqueda por palabra y filtro por resultado
+
+- Todo en cliente sobre el índice de C.1 (ADR-0002), con antirrebote de 150 ms y el
+  mismo scroll por tandas para los resultados.
+- **Búsqueda por palabra sobre título + texto del expediente**, normalizando
+  acentos y mayúsculas. Decisión con datos: el ejemplo del propio plan
+  («alquiler») no aparece en **ningún** título de la XV (la palabra oficial es
+  «arrendamiento»), pero sí en 14 expedientes; «vivienda», en 71. El índice
+  (1,0 MB) lleva el campo `expediente` solo para buscar: la lista sigue mostrando
+  el título. Verificado como lo hace el cliente: «alquiler» → 14;
+  «convalidación» y «convalidacion» → 97.
+- **Filtro por resultado honesto:** «Más Sí que No» / «Más No que Sí» / «Empate»,
+  calculado **en vivo** desde los recuentos — el índice no guarda veredicto, porque
+  «más Sí que No» no es «aprobada» cuando la mayoría es cualificada (nota visible
+  bajo el filtro). Distribución real de la XV: 993 · 1.163 · 19 empates.
+- Contador de resultados accesible (`aria-live`) y estado vacío («Sin resultados
+  para esa búsqueda»).
+- 3 tests nuevos → 31/31. La búsqueda y el filtro requieren JavaScript (mejora
+  progresiva): sin él, la portada sigue mostrando los primeros 50 de C.1.
+
+
 
 
 

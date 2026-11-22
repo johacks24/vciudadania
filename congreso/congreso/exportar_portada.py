@@ -9,9 +9,18 @@ ven sin JavaScript) y el resto se carga al llegar al final de la página (scroll
 infinito) desde `indice.json`. En el índice, el ORDEN del array es la cronología
 (la más reciente primero): el cliente no ordena nada, solo recorre.
 
-Los elementos muestran recuentos oficiales (Sí n · No n · Abst. n), no veredictos:
-como en la ficha del lote 00, «Más Sí que No» no es lo mismo que «aprobada» cuando
-la mayoría exigida es cualificada (docs/diseno.md: números con su contexto).
+Búsqueda y filtro (C.2), todo en cliente sobre el índice ya cargado:
+- por palabra, sobre el título Y el texto del expediente (medido el 23/11: «alquiler»
+  no aparece en ningún título de la XV pero sí en 14 expedientes — la palabra oficial
+  es «arrendamiento» —; «vivienda», en 71), normalizando acentos y mayúsculas
+  («convalidacion» encuentra «Convalidación»), con antirrebote de 150 ms; el
+  expediente es solo buscable: la lista siempre muestra el título;
+- por resultado, con las categorías honestas de la ficha del lote 00 («Más Sí que
+  No» / «Más No que Sí» / «Empate»), calculadas EN VIVO a partir de los recuentos:
+  el índice no guarda ningún veredicto, porque «más Sí que No» no es «aprobada»
+  cuando la mayoría exigida es cualificada (docs/diseno.md: números con contexto).
+
+Los elementos muestran recuentos oficiales (Sí n · No n · Abst. n), no veredictos.
 """
 
 from __future__ import annotations
@@ -23,6 +32,7 @@ from pathlib import Path
 
 N_ESTATICOS = 50  # primeros N elementos sin JavaScript (decisión del moldeo)
 POR_LOTE = 50  # cuántos pinta el scroll infinito por tanda
+ANTIRREBOTE = 150  # ms antes de filtrar al teclear
 
 CSS = """
 :root{color-scheme:light}
@@ -30,7 +40,14 @@ CSS = """
 body{margin:0;font:16px/1.6 system-ui,sans-serif;color:#111;background:#fff}
 main{max-width:720px;margin:0 auto;padding:24px 16px 64px}
 h1{font-size:22px;margin:0 0 4px}
-.lead{color:#555;margin:0 0 20px;font-size:14px}
+.lead{color:#555;margin:0 0 16px;font-size:14px}
+.busqueda{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 4px}
+.busqueda label{font-size:12px;color:#555;display:block;margin:0 0 3px}
+.busqueda input,.busqueda select{font:inherit;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111}
+.busqueda .campo{flex:1 1 220px}
+.busqueda .campo input{width:100%}
+#contador{font-size:13px;color:#555;margin:8px 0 0}
+.nota{font-size:12px;color:#555;margin:4px 0 14px}
 #lista{list-style:none;margin:0;padding:0}
 #lista li{border-bottom:1px solid #f0f0f0}
 #lista a{display:block;padding:12px 2px;text-decoration:none;color:#111}
@@ -55,16 +72,58 @@ PLANTILLA = """<!doctype html>
 <h1>vCiudadania</h1>
 <p class="lead">Legislatura {legislatura} · {n} votaciones del Pleno · recuentos validados
 contra los totales oficiales. Se listan de la más reciente a la más antigua.</p>
+<div class="busqueda">
+  <div class="campo">
+    <label for="q">Buscar por palabra</label>
+    <input id="q" type="search" placeholder="p. ej., alquiler" autocomplete="off">
+  </div>
+  <div class="campo">
+    <label for="filtro">Resultado</label>
+    <select id="filtro">
+      <option value="todos">Todos</option>
+      <option value="si">Más Sí que No</option>
+      <option value="no">Más No que Sí</option>
+      <option value="empate">Empate</option>
+    </select>
+  </div>
+</div>
+<p id="contador" aria-live="polite">{n} votaciones</p>
+<p class="nota">La búsqueda necesita JavaScript. El filtro compara recuentos: no dice
+si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
 <ol id="lista">
 {items}
 </ol>
 <p id="centinela">Cargando más votaciones…</p>
 <script>
 (function () {{
-  var ESTATICOS = {n_estaticos}, LOTE = {por_lote};
+  var ESTATICOS = {n_estaticos}, LOTE = {por_lote}, PAUSA = {antirrebote};
   var lista = document.getElementById('lista');
   var centinela = document.getElementById('centinela');
-  var votaciones = null, i = ESTATICOS, obs = null;
+  var contador = document.getElementById('contador');
+  var q = document.getElementById('q');
+  var filtro = document.getElementById('filtro');
+  var todos = null, vista = [], i = 0, obs = null, temporizador = null;
+  function normaliza(s) {{
+    return (s || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
+  }}
+  function categoria(v) {{
+    return v.si > v.no ? 'si' : (v.no > v.si ? 'no' : 'empate');
+  }}
+  function calculaVista() {{
+    var texto = normaliza(q.value).trim(), cat = filtro.value;
+    vista = todos.filter(function (v) {{
+      if (cat !== 'todos' && categoria(v) !== cat) return false;
+      return !texto || normaliza(v.titulo + ' ' + v.expediente).indexOf(texto) !== -1;
+    }});
+  }}
+  function resumen() {{
+    var total = vista.length, texto = q.value.trim();
+    if (!texto && filtro.value === 'todos') return total + ' votaciones';
+    var r = total + (total === 1 ? ' resultado' : ' resultados');
+    if (texto) r += ' para «' + texto + '»';
+    if (filtro.value !== 'todos') r += ' · ' + filtro.options[filtro.selectedIndex].text;
+    return r;
+  }}
   function pinta(v) {{
     var li = document.createElement('li'), a = document.createElement('a');
     a.href = v.ficha;
@@ -81,17 +140,34 @@ contra los totales oficiales. Se listan de la más reciente a la más antigua.</
     lista.appendChild(li);
   }}
   function carga() {{
-    if (!votaciones) return;
-    var fin = Math.min(i + LOTE, votaciones.length);
-    for (; i < fin; i++) pinta(votaciones[i]);
-    if (i >= votaciones.length) {{
-      centinela.textContent = 'Fin: ' + votaciones.length + ' votaciones.';
+    if (!todos) return;
+    var fin = Math.min(i + LOTE, vista.length);
+    for (; i < fin; i++) pinta(vista[i]);
+    contador.textContent = resumen();
+    if (i >= vista.length) {{
+      centinela.textContent = vista.length ? 'Fin: ' + resumen() + '.' : 'Sin resultados para esa búsqueda.';
       if (obs) obs.disconnect();
     }}
   }}
+  function reinicia() {{
+    if (!todos) return;
+    lista.textContent = '';
+    i = 0;
+    calculaVista();
+    if (obs) {{ obs.disconnect(); obs.observe(centinela); }}
+    carga();
+  }}
+  q.addEventListener('input', function () {{
+    clearTimeout(temporizador);
+    temporizador = setTimeout(reinicia, PAUSA);
+  }});
+  filtro.addEventListener('change', reinicia);
   fetch('indice.json').then(function (r) {{ return r.json(); }}).then(function (j) {{
-    votaciones = j.votaciones;
-    if (i >= votaciones.length) {{ carga(); return; }}
+    todos = j.votaciones;
+    calculaVista();
+    i = ESTATICOS;
+    contador.textContent = resumen();
+    if (i >= vista.length) {{ carga(); return; }}
     if ('IntersectionObserver' in window) {{
       obs = new IntersectionObserver(function (entradas) {{
         if (entradas.some(function (e) {{ return e.isIntersecting; }})) carga();
@@ -127,15 +203,16 @@ def votaciones_recientes(bd: Path, legislatura: str) -> list[dict]:
     con = sqlite3.connect(bd)
     con.row_factory = sqlite3.Row
     filas = con.execute(
-        "SELECT id, sesion, numero, fecha, titulo, afavor, en_contra, abstenciones,"
-        " no_votan, sin_voto_individual FROM votaciones WHERE legislatura = ?",
+        "SELECT id, sesion, numero, fecha, titulo, texto_expediente, afavor, en_contra,"
+        " abstenciones, no_votan, sin_voto_individual FROM votaciones WHERE legislatura = ?",
         (legislatura,),
     ).fetchall()
     con.close()
     vots = [
         {
             "id": f["id"], "sesion": f["sesion"], "numero": f["numero"], "fecha": f["fecha"],
-            "titulo": f["titulo"], "si": f["afavor"], "no": f["en_contra"],
+            "titulo": f["titulo"], "expediente": f["texto_expediente"],
+            "si": f["afavor"], "no": f["en_contra"],
             "abst": f["abstenciones"], "novota": f["no_votan"],
             "sin_individual": bool(f["sin_voto_individual"]),
             "ficha": f"votacion/{f['id']}.html",
@@ -180,6 +257,7 @@ def generar_portada(vots: list[dict], destino: Path, legislatura: str) -> Path:
             n=len(vots),
             n_estaticos=min(N_ESTATICOS, len(vots)),
             por_lote=POR_LOTE,
+            antirrebote=ANTIRREBOTE,
             items="\n".join(_item(v) for v in vots[:N_ESTATICOS]),
         ),
         encoding="utf-8",
