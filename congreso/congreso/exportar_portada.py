@@ -18,7 +18,10 @@ Búsqueda y filtro (C.2), todo en cliente sobre el índice ya cargado:
 - por resultado, con las categorías honestas de la ficha del lote 00 («Más Sí que
   No» / «Más No que Sí» / «Empate»), calculadas EN VIVO a partir de los recuentos:
   el índice no guarda ningún veredicto, porque «más Sí que No» no es «aprobada»
-  cuando la mayoría exigida es cualificada (docs/diseno.md: números con contexto).
+  cuando la mayoría exigida es cualificada (docs/diseno.md: números con contexto);
+- por tema (C.3): UN tema por votación asignado por CongresoAbierto (CC BY 4.0,
+  ADR-0005.3: fuente secundaria con atribución en el pie y cruce por fuente_url
+  validado en el CLI), con su distribución en las opciones del desplegable.
 
 Los elementos muestran recuentos oficiales (Sí n · No n · Abst. n), no veredictos.
 """
@@ -29,6 +32,8 @@ import html
 import json
 import sqlite3
 from pathlib import Path
+
+from .fuentes.congresoabierto import CITA as CITA_CONGRESOABIERTO
 
 N_ESTATICOS = 50  # primeros N elementos sin JavaScript (decisión del moldeo)
 POR_LOTE = 50  # cuántos pinta el scroll infinito por tanda
@@ -86,6 +91,13 @@ contra los totales oficiales. Se listan de la más reciente a la más antigua.</
       <option value="empate">Empate</option>
     </select>
   </div>
+  <div class="campo">
+    <label for="tema">Tema</label>
+    <select id="tema">
+      <option value="todos">Todos</option>
+      {opciones_tema}
+    </select>
+  </div>
 </div>
 <p id="contador" aria-live="polite">{n} votaciones</p>
 <p class="nota">La búsqueda necesita JavaScript. El filtro compara recuentos: no dice
@@ -102,6 +114,7 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
   var contador = document.getElementById('contador');
   var q = document.getElementById('q');
   var filtro = document.getElementById('filtro');
+  var tema = document.getElementById('tema');
   var todos = null, vista = [], i = 0, obs = null, temporizador = null;
   function normaliza(s) {{
     return (s || '').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
@@ -110,18 +123,20 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
     return v.si > v.no ? 'si' : (v.no > v.si ? 'no' : 'empate');
   }}
   function calculaVista() {{
-    var texto = normaliza(q.value).trim(), cat = filtro.value;
+    var texto = normaliza(q.value).trim(), cat = filtro.value, un_tema = tema.value;
     vista = todos.filter(function (v) {{
       if (cat !== 'todos' && categoria(v) !== cat) return false;
+      if (un_tema !== 'todos' && v.temas.indexOf(un_tema) === -1) return false;
       return !texto || normaliza(v.titulo + ' ' + v.expediente).indexOf(texto) !== -1;
     }});
   }}
   function resumen() {{
     var total = vista.length, texto = q.value.trim();
-    if (!texto && filtro.value === 'todos') return total + ' votaciones';
+    if (!texto && filtro.value === 'todos' && tema.value === 'todos') return total + ' votaciones';
     var r = total + (total === 1 ? ' resultado' : ' resultados');
     if (texto) r += ' para «' + texto + '»';
     if (filtro.value !== 'todos') r += ' · ' + filtro.options[filtro.selectedIndex].text;
+    if (tema.value !== 'todos') r += ' · tema: ' + tema.value;
     return r;
   }}
   function pinta(v) {{
@@ -162,6 +177,7 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
     temporizador = setTimeout(reinicia, PAUSA);
   }});
   filtro.addEventListener('change', reinicia);
+  tema.addEventListener('change', reinicia);
   fetch('indice.json').then(function (r) {{ return r.json(); }}).then(function (j) {{
     todos = j.votaciones;
     calculaVista();
@@ -186,6 +202,7 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
 <p>Fuente: vCiudadania (vciudadania), a partir de los <a href="https://www.congreso.es/es/opendata">datos abiertos
 del Congreso de los Diputados</a>. Cada votación enlaza su registro oficial. La valoración es tuya:
 no recomendamos el voto. Método y límites: <a href="https://github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md">docs/metodo/metodo.md</a>.</p>
+<p>Clasificación por temas: {cita_temas} · CC BY 4.0.</p>
 </footer>
 </main>
 </body>
@@ -207,6 +224,9 @@ def votaciones_recientes(bd: Path, legislatura: str) -> list[dict]:
         " abstenciones, no_votan, sin_voto_individual FROM votaciones WHERE legislatura = ?",
         (legislatura,),
     ).fetchall()
+    temas: dict[str, list[str]] = {}
+    for vid, tema in con.execute("SELECT votacion_id, tema FROM temas_votacion"):
+        temas.setdefault(vid, []).append(tema)
     con.close()
     vots = [
         {
@@ -215,12 +235,26 @@ def votaciones_recientes(bd: Path, legislatura: str) -> list[dict]:
             "si": f["afavor"], "no": f["en_contra"],
             "abst": f["abstenciones"], "novota": f["no_votan"],
             "sin_individual": bool(f["sin_voto_individual"]),
+            "temas": sorted(temas.get(f["id"], [])),
             "ficha": f"votacion/{f['id']}.html",
         }
         for f in filas
     ]
     vots.sort(key=lambda v: (-_orden_fecha(v["fecha"]), -v["sesion"], -v["numero"]))
     return vots
+
+
+def temas_con_cuenta(bd: Path, legislatura: str) -> list[tuple[str, int]]:
+    """Temas de la legislatura con su nº de votaciones, de más frecuentes a menos."""
+    con = sqlite3.connect(bd)
+    filas = con.execute(
+        "SELECT t.tema, COUNT(*) AS n FROM temas_votacion t"
+        " JOIN votaciones v ON v.id = t.votacion_id"
+        " WHERE v.legislatura = ? GROUP BY t.tema ORDER BY n DESC, t.tema",
+        (legislatura,),
+    ).fetchall()
+    con.close()
+    return [(t, n) for t, n in filas]
 
 
 def generar_indice(vots: list[dict], destino: Path, legislatura: str) -> Path:
@@ -247,9 +281,19 @@ def _item(v: dict) -> str:
     )
 
 
-def generar_portada(vots: list[dict], destino: Path, legislatura: str) -> Path:
-    """Escribe web/portada.html: los primeros N_ESTATICOS van en el HTML (sin JavaScript)."""
+def generar_portada(
+    vots: list[dict], destino: Path, legislatura: str, temas: list[tuple[str, int]] | None = None
+) -> Path:
+    """Escribe web/portada.html: los primeros N_ESTATICOS van en el HTML (sin JavaScript).
+
+    `temas` es la distribución (tema, nº de votaciones) para el filtro por tema,
+    de CongresoAbierto (CC BY 4.0): sin ella, el select solo ofrece «Todos».
+    """
     destino.parent.mkdir(parents=True, exist_ok=True)
+    opciones = "\n".join(
+        f'<option value="{html.escape(t)}">{html.escape(t)} ({n})</option>'
+        for t, n in (temas or [])
+    )
     destino.write_text(
         PLANTILLA.format(
             css=CSS,
@@ -258,6 +302,8 @@ def generar_portada(vots: list[dict], destino: Path, legislatura: str) -> Path:
             n_estaticos=min(N_ESTATICOS, len(vots)),
             por_lote=POR_LOTE,
             antirrebote=ANTIRREBOTE,
+            opciones_tema=opciones,
+            cita_temas=CITA_CONGRESOABIERTO,
             items="\n".join(_item(v) for v in vots[:N_ESTATICOS]),
         ),
         encoding="utf-8",

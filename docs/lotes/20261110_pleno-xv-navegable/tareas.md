@@ -95,8 +95,14 @@ Marca `[x]` al completar. El agente trabaja de arriba abajo con `/siguiente`.
       recuento —Más Sí que No / Más No que Sí / Empate: 993 · 1.163 · 19 en la XV—
       calculado en vivo (el índice no guarda veredicto); índice a 1,0 MB; contador
       aria-live y estado vacío; 31/31 tests*
-- [ ] C.3 Tema por votación: importar los temas de CongresoAbierto (CC BY 4.0) con
+- [x] C.3 Tema por votación: importar los temas de CongresoAbierto (CC BY 4.0) con
       atribución y validación nuestra (ADR-0005.3) → filtro por tema (recorrido 2)
+      — *hecha el 23/11: `make temas` cruza su CSV por `fuente_url` —**2.175 de
+      2.175** (2.504 pares), sin avisos— con atribución CC BY 4.0 en el pie;
+      separador real « | » (**15 temas**, no los 76 del primer sondeo con comas;
+      299 multi-tema); filtro por tema combinable con palabra y resultado, con la
+      cuenta en cada opción; degradación sin tabla; su columna `resultado` no se
+      adopta; 37/37 tests*
 - [ ] C.4 Ficha por votación para toda la XV (~2.190 fichas: qué se votó, recuento
       con waffle por diputado — ADR-0007: celda de color de grupo, voto por posición,
       alternativa textual —, voto por grupo, fuente oficial; recorrido 3) — generador

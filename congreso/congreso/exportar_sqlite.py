@@ -53,9 +53,15 @@ CREATE TABLE IF NOT EXISTS diputados (
   biografia TEXT NOT NULL,
   PRIMARY KEY (legislatura, nombre)
 );
+CREATE TABLE IF NOT EXISTS temas_votacion (
+  votacion_id TEXT NOT NULL REFERENCES votaciones(id),
+  tema TEXT NOT NULL,
+  PRIMARY KEY (votacion_id, tema)
+);
 CREATE INDEX IF NOT EXISTS idx_votos_votacion ON votos(votacion_id);
 CREATE INDEX IF NOT EXISTS idx_votaciones_fecha ON votaciones(fecha);
 CREATE INDEX IF NOT EXISTS idx_diputados_grupo ON diputados(grupo);
+CREATE INDEX IF NOT EXISTS idx_temas_tema ON temas_votacion(tema);
 """
 
 
@@ -123,3 +129,20 @@ def exportar_diputados(diputados: list[Diputado], destino: Path, legislatura: st
     bd.commit()
     bd.close()
     return len(diputados)
+
+
+def exportar_temas(pares: list[tuple[str, str]], destino: Path) -> int:
+    """Escribe temas_votacion (pares (id de votación, tema)): reconstrucción completa.
+
+    Fuente secundaria con atribución (ADR-0005.3): la asignación de temas es de
+    CongresoAbierto (CC BY 4.0); el cruce contra nuestras votaciones se hace en el
+    CLI antes de llegar aquí.
+    """
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    bd = sqlite3.connect(destino)
+    bd.executescript(ESQUEMA)
+    bd.execute("DELETE FROM temas_votacion")
+    bd.executemany("INSERT OR IGNORE INTO temas_votacion VALUES (?,?)", pares)
+    bd.commit()
+    bd.close()
+    return len(pares)

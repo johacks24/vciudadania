@@ -9,9 +9,16 @@ import time
 from pathlib import Path
 
 from .exportar_ficha import generar as generar_ficha
-from .exportar_portada import N_ESTATICOS, generar_indice, generar_portada, votaciones_recientes
+from .exportar_portada import (
+    N_ESTATICOS,
+    generar_indice,
+    generar_portada,
+    temas_con_cuenta,
+    votaciones_recientes,
+)
 from .exportar_sqlite import exportar as exportar_sqlite
-from .exportar_sqlite import exportar_diputados
+from .exportar_sqlite import exportar_diputados, exportar_temas
+from .fuentes import congresoabierto
 from .fuentes.congreso_es import (
     cargar_diputados,
     cargar_registro,
@@ -197,6 +204,44 @@ def cmd_diputados(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_temas(args: argparse.Namespace) -> int:
+    """Importa los temas de CongresoAbierto (CC BY 4.0) contrastándolos con nuestra base."""
+    import sqlite3
+
+    bd_path = RAIZ / "data" / "processed" / "congreso.sqlite"
+    if not bd_path.exists():
+        LOG.error("No hay base exportada: ejecuta primero `make exportar-legislatura`.")
+        return 1
+    csv_path = RAIZ / "data" / "raw" / "congresoabierto" / "votaciones.csv"
+    congresoabierto.descargar_csv(csv_path)
+    LOG.info("CSV de CongresoAbierto (inmutable): %s", csv_path.relative_to(RAIZ))
+    temas = congresoabierto.cargar_temas(csv_path)
+
+    # Contraste (ADR-0005.3): cruce por fuente_url contra nuestras votaciones
+    bd = sqlite3.connect(bd_path)
+    nuestras = {u: i for i, u in bd.execute(
+        "SELECT id, fuente_url FROM votaciones WHERE legislatura = ?", (args.legislatura,))}
+    bd.close()
+    pares = [
+        (nuestras[url], tema)
+        for url, lista in temas.items() if url in nuestras
+        for tema in lista
+    ]
+    sin_tema = len(nuestras) - len({p[0] for p in pares})
+    suyas_sin_nuestra = len([u for u in temas if u not in nuestras])
+    if sin_tema or suyas_sin_nuestra:
+        LOG.warning(
+            "Contraste: %d nuestras sin tema y %d suyas sin votación nuestra.",
+            sin_tema, suyas_sin_nuestra,
+        )
+    n = exportar_temas(pares, bd_path)
+    LOG.info(
+        "Temas: %d pares para %d votaciones (de %d). Fuente: %s · CC BY 4.0.",
+        n, len({p[0] for p in pares}), len(nuestras), congresoabierto.CITA,
+    )
+    return 0
+
+
 def cmd_web(args: argparse.Namespace) -> int:
     """Genera la portada y el índice de la legislatura desde la base exportada."""
     bd = RAIZ / "data" / "processed" / "congreso.sqlite"
@@ -207,9 +252,12 @@ def cmd_web(args: argparse.Namespace) -> int:
     if not vots:
         LOG.error("La base no tiene votaciones de la Leg%s: `make ingesta-legislatura` primero.", args.legislatura)
         return 1
+    temas = temas_con_cuenta(bd, args.legislatura)
+    if not temas:
+        LOG.warning("Sin temas: ejecuta `make temas` para que el filtro por tema tenga opciones.")
     web = RAIZ / "web"
     indice = generar_indice(vots, web / "indice.json", args.legislatura)
-    portada = generar_portada(vots, web / "portada.html", args.legislatura)
+    portada = generar_portada(vots, web / "portada.html", args.legislatura, temas)
     LOG.info(
         "Portada: %d votaciones (las %d primeras sin JavaScript) · índice: %s",
         len(vots), min(N_ESTATICOS, len(vots)), indice.relative_to(RAIZ),
@@ -226,6 +274,10 @@ def main() -> None:
     s.add_argument("--legislatura", default="XV")
     s.add_argument("--fecha", default=None, help="formato AAAA-MM-DD; sin ella, toda la legislatura")
     s.set_defaults(fn=cmd_ingesta)
+
+    s = sub.add_parser("temas", help="importar los temas de CongresoAbierto (CC BY 4.0) contrastados con la base")
+    s.add_argument("--legislatura", default="XV")
+    s.set_defaults(fn=cmd_temas)
 
     s = sub.add_parser("web", help="generar la portada y el índice de la legislatura (las fichas llegan en C.4)")
     s.add_argument("--legislatura", default="XV")

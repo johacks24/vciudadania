@@ -283,6 +283,28 @@ primer intento de arreglo solo probó la sesión 202, que no necesita relleno.
 Lección nº 7 en `AGENTS.md`. El despliegue de la ficha corregida va con este
 commit.
 
+## 23/11/2026 · C.3 completada: temas de CongresoAbierto + filtro por tema
+
+- `make temas` descarga su CSV a `data/raw/congresoabierto/votaciones.csv`
+  (inmutable) e importa la asignación de temas como **fuente secundaria**
+  (ADR-0005.3): cruce por `fuente_url` —la URL oficial del JSON, ya corregida
+  esta misma tarde— y **atribución CC BY 4.0** visible en el pie de la portada y en
+  el log.
+- **Contraste: 2.175 de 2.175** votaciones cruzadas (2.504 pares tema-votación),
+  sin avisos.
+- Catálogo corregido con el separador real: la columna `temas` separa con **« | »**.
+  El primer sondeo partía por comas y dio 76 «temas» falsos (cadenas unidas por
+  pipe). El real: **15 temas**, 299 votaciones con varios (p. ej., el suplicatorio
+  de la 89: «justicia | instituciones»), 0 sin tema. Frecuencia: otros (749),
+  transporte (266), economia (261), justicia (169), trabajo (158), sanidad (139)…
+- Filtro por tema en la portada (tercer desplegable, con la cuenta en cada
+  opción), combinable con palabra y resultado. El índice lleva `temas` por
+  votación; sin tabla de temas, la portada degrada a «Todos» sin romperse.
+- Su columna `resultado` (Aprobada 951 · Rechazada 1.170 · Convalidado 42 ·
+  Derogado 12) **no se adopta**: mantenemos los recuentos honestos de la ficha.
+- 5 tests nuevos (fixture de 2 filas reales de su CSV) → 37/37.
+
+
 
 
 

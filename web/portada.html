@@ -48,6 +48,27 @@ contra los totales oficiales. Se listan de la más reciente a la más antigua.</
       <option value="empate">Empate</option>
     </select>
   </div>
+  <div class="campo">
+    <label for="tema">Tema</label>
+    <select id="tema">
+      <option value="todos">Todos</option>
+      <option value="otros">otros (749)</option>
+<option value="transporte">transporte (266)</option>
+<option value="economia">economia (261)</option>
+<option value="justicia">justicia (169)</option>
+<option value="trabajo">trabajo (158)</option>
+<option value="sanidad">sanidad (139)</option>
+<option value="instituciones">instituciones (137)</option>
+<option value="igualdad">igualdad (129)</option>
+<option value="territorio">territorio (113)</option>
+<option value="vivienda">vivienda (98)</option>
+<option value="exterior">exterior (85)</option>
+<option value="campo-medioambiente">campo-medioambiente (75)</option>
+<option value="migracion">migracion (60)</option>
+<option value="educacion">educacion (37)</option>
+<option value="defensa">defensa (28)</option>
+    </select>
+  </div>
 </div>
 <p id="contador" aria-live="polite">2175 votaciones</p>
 <p class="nota">La búsqueda necesita JavaScript. El filtro compara recuentos: no dice
@@ -113,6 +134,7 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
   var contador = document.getElementById('contador');
   var q = document.getElementById('q');
   var filtro = document.getElementById('filtro');
+  var tema = document.getElementById('tema');
   var todos = null, vista = [], i = 0, obs = null, temporizador = null;
   function normaliza(s) {
     return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -121,18 +143,20 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
     return v.si > v.no ? 'si' : (v.no > v.si ? 'no' : 'empate');
   }
   function calculaVista() {
-    var texto = normaliza(q.value).trim(), cat = filtro.value;
+    var texto = normaliza(q.value).trim(), cat = filtro.value, un_tema = tema.value;
     vista = todos.filter(function (v) {
       if (cat !== 'todos' && categoria(v) !== cat) return false;
+      if (un_tema !== 'todos' && v.temas.indexOf(un_tema) === -1) return false;
       return !texto || normaliza(v.titulo + ' ' + v.expediente).indexOf(texto) !== -1;
     });
   }
   function resumen() {
     var total = vista.length, texto = q.value.trim();
-    if (!texto && filtro.value === 'todos') return total + ' votaciones';
+    if (!texto && filtro.value === 'todos' && tema.value === 'todos') return total + ' votaciones';
     var r = total + (total === 1 ? ' resultado' : ' resultados');
     if (texto) r += ' para «' + texto + '»';
     if (filtro.value !== 'todos') r += ' · ' + filtro.options[filtro.selectedIndex].text;
+    if (tema.value !== 'todos') r += ' · tema: ' + tema.value;
     return r;
   }
   function pinta(v) {
@@ -173,6 +197,7 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
     temporizador = setTimeout(reinicia, PAUSA);
   });
   filtro.addEventListener('change', reinicia);
+  tema.addEventListener('change', reinicia);
   fetch('indice.json').then(function (r) { return r.json(); }).then(function (j) {
     todos = j.votaciones;
     calculaVista();
@@ -197,6 +222,7 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
 <p>Fuente: vCiudadania (vciudadania), a partir de los <a href="https://www.congreso.es/es/opendata">datos abiertos
 del Congreso de los Diputados</a>. Cada votación enlaza su registro oficial. La valoración es tuya:
 no recomendamos el voto. Método y límites: <a href="https://github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md">docs/metodo/metodo.md</a>.</p>
+<p>Clasificación por temas: Congreso Abierto (congresoabierto.org), a partir de datos oficiales del Congreso de los Diputados · CC BY 4.0.</p>
 </footer>
 </main>
 </body>

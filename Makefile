@@ -22,6 +22,9 @@ ingesta-legislatura: ## descargar TODA la legislatura (XV: 147 días, ~2.190 JSO
 diputados: ## descargar exportadores de diputados (activos + bajas) y cargar la tabla en SQLite
 	.venv/bin/congreso diputados --legislatura $(LEGISLATURA)
 
+temas: ## importar temas de CongresoAbierto (CC BY 4.0) contrastados con la base
+	.venv/bin/congreso temas --legislatura $(LEGISLATURA)
+
 validar: ## cuadrar TODA la legislatura descargada (recuentos individuales == totales oficiales)
 	.venv/bin/congreso validar --legislatura $(LEGISLATURA)
 
