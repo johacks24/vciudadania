@@ -1,8 +1,6 @@
 # Lote 01 — Pleno XV navegable
 
-**Plan borrador aprobado como apuesta en investigación.** Al moldear se afina este plan
-y nacen `tareas.md` y `notas.md` (desde `_plantilla.md`). Estado vivo en `docs/apuestas.md`.
-**Tamaño estimado:** 2–3 semanas (a fijar al moldear).
+**Fechas:** 10/11/2026 → · **Tamaño:** ~2 semanas · Estado vivo en `docs/apuestas.md`
 
 ## Problema
 
