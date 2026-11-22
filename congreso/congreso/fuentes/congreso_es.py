@@ -108,10 +108,35 @@ def cargar_registro(fichero: Path) -> RegistroVotacion:
     return reg
 
 
+_VALORES_ROMANOS = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+
+
+def _ordinal_legislatura(romano: str) -> int:
+    """'XV' → 15. El almacenamiento usa el romano (LegXV); la URL oficial, el ordinal (Leg15)."""
+    valores = [_VALORES_ROMANOS[c] for c in romano.upper()]
+    total = 0
+    for actual, siguiente in zip(valores, valores[1:]):
+        total += actual if actual >= siguiente else -actual
+    return total + valores[-1]
+
+
 def url_desde_ruta(fichero: Path) -> str:
-    """Reconstruye la URL oficial desde la ruta relativa en data/raw."""
+    """Reconstruye la URL oficial desde la ruta relativa en data/raw.
+
+    Dos conversiones (verificado el 23/11/2026 contra el servidor; lección 4x4 nº 7):
+    - legislatura: el almacenamiento usa el romano (LegXV) y la URL oficial el
+      ordinal (Leg15) — LegXV da HTTP 404;
+    - sesión: el almacenamiento guarda el entero sin ceros (Sesion98) y la URL
+      oficial rellena a 3 dígitos (Sesion098) — Sesion2 y Sesion98 dan 404;
+      Sesion002 y Sesion098, 200.
+    """
     rel = Path(*fichero.parts[fichero.parts.index("raw") + 1 :]) if "raw" in fichero.parts else fichero
-    return f"{BASE}/webpublica/opendata/votaciones/{rel.as_posix()}"
+    partes = list(rel.parts)
+    if partes and partes[0].startswith("Leg") and partes[0][3:].isalpha():
+        partes[0] = f"Leg{_ordinal_legislatura(partes[0][3:])}"
+    if len(partes) > 1 and partes[1].startswith("Sesion") and partes[1][6:].isdigit():
+        partes[1] = f"Sesion{int(partes[1][6:]):03d}"
+    return f"{BASE}/webpublica/opendata/votaciones/{Path(*partes).as_posix()}"
 
 
 RE_DIPUTADOS = re.compile(r"webpublica/opendata/diputados/Diputados(?:Activos|DeBaja)__\d+\.json")

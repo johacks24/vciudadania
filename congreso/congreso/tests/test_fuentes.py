@@ -69,3 +69,36 @@ def test_dia_llamamiento_sin_json(monkeypatch):
     html = (FIX / "dia_llamamiento.html").read_text(encoding="utf-8")
     monkeypatch.setattr(congreso_es.httpx, "get", lambda *a, **k: _Respuesta(html))
     assert congreso_es.urls_votaciones("02/10/2026", "XV") == []
+
+
+def test_url_desde_ruta_genera_la_url_oficial(tmp_path):
+    """Almacenamiento (romano, sesión sin ceros) → URL oficial (ordinal, 3 dígitos).
+
+    Lección 4x4 nº 7: la URL reconstruida se contrasta con la real de la fuente
+    (LegXV/Sesion98 daba 404; Leg15/Sesion098 da 200). Aserción de URL completa.
+    """
+    def url_de(sesion_almacen: str, fecha: str, votacion: str, fichero: str) -> str:
+        f = tmp_path / "data" / "raw" / "LegXV" / sesion_almacen / fecha / votacion / fichero
+        f.parent.mkdir(parents=True)
+        f.write_text("{}", encoding="utf-8")
+        return congreso_es.url_desde_ruta(f)
+
+    assert url_de("Sesion202", "20260930", "Votacion021", "VOT_20260930153628.json") == (
+        "https://www.congreso.es/webpublica/opendata/votaciones/"
+        "Leg15/Sesion202/20260930/Votacion021/VOT_20260930153628.json"
+    )
+    assert url_de("Sesion98", "20250313", "Votacion021", "VOT_20250313133915.json") == (
+        "https://www.congreso.es/webpublica/opendata/votaciones/"
+        "Leg15/Sesion098/20250313/Votacion021/VOT_20250313133915.json"
+    )
+    assert url_de("Sesion2", "20230919", "Votacion001", "VOT_20230919152005.json") == (
+        "https://www.congreso.es/webpublica/opendata/votaciones/"
+        "Leg15/Sesion002/20230919/Votacion001/VOT_20230919152005.json"
+    )
+
+
+def test_ordinal_de_legislatura():
+    """El parser cubre la XIV (pasado), la XV (actual) y la XVI (noviembre 2026)."""
+    assert congreso_es._ordinal_legislatura("XIV") == 14
+    assert congreso_es._ordinal_legislatura("XV") == 15
+    assert congreso_es._ordinal_legislatura("XVI") == 16

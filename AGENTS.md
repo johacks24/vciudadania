@@ -117,3 +117,16 @@ operativa para el agente, no como nota para el humano. El aprendizaje del proyec
   real apareció al ejecutar (404). **Regla: cuando un test valide una URL generada,
   la aserción es la URL completa exacta, no subcadenas; y toda regex de extracción se
   contrasta con la descarga real antes de darla por buena.**
+- 2026-11-23 (4x4 nº 7, enlaces de fuente rotos): TODOS los enlaces «Fuente oficial»
+  de la ficha en producción daban 404 por dos conversiones que `url_desde_ruta` no
+  hacía al reconstruir la URL desde nuestra ruta de almacenamiento: el romano del
+  depósito (LegXV) en vez del ordinal oficial (Leg15), y la sesión sin ceros
+  (Sesion98) en vez de los 3 dígitos oficiales (Sesion098). La verificación del
+  lote 00 (D.2) comprobó que los enlaces ESTABAN en la página, no que RESOLVIERAN;
+  el primer arreglo solo probó la sesión 202 (3 dígitos naturales) y dejó pasar el
+  segundo bicho. Lo destapó el cruce con el CSV de CongresoAbierto (C.3):
+  intersección 0 de 2.175. **Regla: todo enlace generado hacia la fuente se verifica
+  UNA vez con petición real (HTTP 200) cubriendo cada variante del formato —p. ej.,
+  sesión de 1, 2 y 3 dígitos—, nunca con su sola presencia en el HTML; y al
+  reconstruir URLs oficiales desde rutas propias, contrastar la reconstrucción con
+  la URL real de la fuente.**

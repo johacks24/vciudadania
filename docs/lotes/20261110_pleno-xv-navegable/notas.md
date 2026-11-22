@@ -260,6 +260,30 @@ consultado el 22/11):
 - 3 tests nuevos → 31/31. La búsqueda y el filtro requieren JavaScript (mejora
   progresiva): sin él, la portada sigue mostrando los primeros 50 de C.1.
 
+## 23/11/2026 · Corrección (4x4 nº 7): enlaces «Fuente oficial» rotos — resuelto
+
+Al preparar C.3 (cruce con el CSV de CongresoAbierto por `url_votacion`) la
+intersección dio **0 de 2.175**: nuestras `fuente_url` reconstruidas eran inválidas
+y **todos los enlaces «Fuente oficial» de la ficha en producción daban 404**. Dos
+conversiones que `url_desde_ruta` no hacía, verificadas contra el servidor con
+peticiones reales:
+
+- **legislatura**: el almacenamiento usa el romano (`data/raw/LegXV/`) y la URL
+  oficial el ordinal (`…/votaciones/Leg15/…`) — LegXV → 404, Leg15 → 200;
+- **sesión**: el almacenamiento guarda el entero sin ceros (`Sesion98`) y la URL
+  oficial rellena a 3 dígitos (`Sesion098`) — Sesion2 y Sesion98 → 404;
+  Sesion002 y Sesion098 → 200 (la página del día de hoy enlaza con relleno).
+
+Arreglado con parser romano→ordinal y relleno a 3 dígitos en `url_desde_ruta`
+(el almacenamiento no cambia: es nuestro y coherente). Regenerados ficha y base;
+**verificado con peticiones reales a sesiones 002, 098 y 202: HTTP 200**, y el cruce
+con el CSV pasa a **2.175 de 2.175**. La causa raíz: la verificación del lote 00
+(D.2) comprobó que los enlaces estaban en la página, no que resolvieran — y el
+primer intento de arreglo solo probó la sesión 202, que no necesita relleno.
+Lección nº 7 en `AGENTS.md`. El despliegue de la ficha corregida va con este
+commit.
+
+
 
 
 
