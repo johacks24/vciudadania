@@ -130,3 +130,14 @@ operativa para el agente, no como nota para el humano. El aprendizaje del proyec
   sesión de 1, 2 y 3 dígitos—, nunca con su sola presencia en el HTML; y al
   reconstruir URLs oficiales desde rutas propias, contrastar la reconstrucción con
   la URL real de la fuente.**
+- 2026-11-23 (4x4 nº 8, despliegue de Pages): un despliegue falló en
+  `deploy-pages` (5xx transitorio) y el «Re-run failed jobs» del MISMO run lo
+  empeoró: el run conserva su artefacto `github-pages`, el re-intento sube otro, y
+  la acción aborta con «Multiple artifacts named "github-pages"». Además, el texto
+  de error de un paso de Actions NO es accesible anónimamente (logs bajo
+  autenticación) y el entorno bloquea extraer la credencial del llavero para el
+  API. **Regla: el reintento de un despliegue de Pages es un run NUEVO
+  (`workflow_dispatch` desde la web de Actions o push que toque `web/**`), nunca
+  re-ejecutar el mismo run; y en cuanto las vías anónimas (check-runs, deployments,
+  githubstatus) se agoten sin revelar el error, pedir al humano el log del paso
+  fallido —lo tiene a un clic en la web de Actions— antes de inventar diagnósticos.**

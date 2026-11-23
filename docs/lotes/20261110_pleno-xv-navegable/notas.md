@@ -423,6 +423,12 @@ recorrido 4 queda inaccesible sin conocer la URL.
   queda en la suite (44/44).
 - **Determinismo re-verificado:** al regenerar con `make web` solo cambia
   `web/index.html`; fichas, índice y dataset byte-idénticos.
+- **Despliegue (4x4 nº 8):** el push del commit tocó un fallo transitorio de
+  `deploy-pages` (5xx) y el re-run del mismo run duplicó el artefacto
+  («Multiple artifacts named "github-pages"», lección en AGENTS.md); resuelto con
+  un **run nuevo** (`workflow_dispatch`, run 45090581961, success). Producción
+  verificada: HTTP 200, `index.html` byte a byte idéntico al commit y orden
+  nota < descarga < lista comprobado en el HTML servido.
 
 
 
