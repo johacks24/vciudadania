@@ -25,7 +25,7 @@ h1{font-size:22px;margin:0 0 4px}
 #lista .titulo{display:block;font-size:15px;line-height:1.45;margin:2px 0}
 #lista .recuento{display:block;font-size:13px;color:#555}
 #centinela{padding:28px 0;color:#555;font-size:13px;text-align:center}
-.descarga{margin-top:40px;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+.descarga{margin:12px 0 20px;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
 .descarga h2{font-size:16px;margin:0 0 8px;color:#555;font-weight:600}
 .descarga ul{margin:8px 0;padding-left:20px}
 .descarga li{margin:4px 0}
@@ -80,6 +80,17 @@ contra los totales oficiales. Se listan de la más reciente a la más antigua.</
 <p id="contador" aria-live="polite">2175 votaciones</p>
 <p class="nota">La búsqueda necesita JavaScript. El filtro compara recuentos: no dice
 si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
+<section class="descarga">
+<h2>Descarga los datos</h2>
+<p>Toda la legislatura (2175 votaciones) con su cita:</p>
+<ul>
+<li><a href="datos/votaciones.csv">votaciones.csv</a> — una fila por votación, con el
+enlace a su registro oficial</li>
+<li><a href="datos/votaciones.json">votaciones.json</a> — lo mismo, y la cita dentro</li>
+</ul>
+<p class="cita">Cita: vCiudadania (vciudadania), a partir de los datos abiertos del Congreso de los Diputados · CC BY-SA 4.0. Temas: Congreso Abierto (congresoabierto.org), a partir de datos oficiales del Congreso de los Diputados · CC BY 4.0.</p>
+<p class="nota">Cómo se hace y sus límites: <a href="https://github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md">docs/metodo/metodo.md</a>.</p>
+</section>
 <ol id="lista">
 <li><a href="votacion/Leg202-021.html"><span class="fecha">30/9/2026</span><span class="titulo">Dictámenes de la Comisión del Estatuto.</span><span class="recuento">340 Sí · 0 No · 0 Abst. · votación no nominal (solo totales)</span></a></li>
 <li><a href="votacion/Leg202-020.html"><span class="fecha">30/9/2026</span><span class="titulo">Dictámenes de la Comisión del Estatuto.</span><span class="recuento">343 Sí · 1 No · 2 Abst.</span></a></li>
@@ -133,17 +144,6 @@ si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
 <li><a href="votacion/Leg198-045.html"><span class="fecha">16/9/2026</span><span class="titulo">Enmiendas del Senado.</span><span class="recuento">345 Sí · 0 No · 0 Abst.</span></a></li>
 </ol>
 <p id="centinela">Cargando más votaciones…</p>
-<section class="descarga">
-<h2>Descarga los datos</h2>
-<p>Toda la legislatura (2175 votaciones) con su cita:</p>
-<ul>
-<li><a href="datos/votaciones.csv">votaciones.csv</a> — una fila por votación, con el
-enlace a su registro oficial</li>
-<li><a href="datos/votaciones.json">votaciones.json</a> — lo mismo, y la cita dentro</li>
-</ul>
-<p class="cita">Cita: vCiudadania (vciudadania), a partir de los datos abiertos del Congreso de los Diputados · CC BY-SA 4.0. Temas: Congreso Abierto (congresoabierto.org), a partir de datos oficiales del Congreso de los Diputados · CC BY 4.0.</p>
-<p class="nota">Cómo se hace y sus límites: <a href="https://github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md">docs/metodo/metodo.md</a>.</p>
-</section>
 <script>
 (function () {
   var ESTATICOS = 50, LOTE = 50, PAUSA = 150;

@@ -55,6 +55,9 @@ def test_portada_enlaza_el_dataset_con_su_cita(tmp_path):
     vots = votaciones_recientes(bd, "XV")
     pagina = generar_portada(vots, tmp_path / "portada.html", "XV", None).read_text(encoding="utf-8")
     assert "Descarga los datos" in pagina
+    # dirección de diseño (23/11/2026): la descarga va ANTES de la lista — con scroll
+    # infinito de 2.175 elementos, al final de la página no se ve.
+    assert pagina.index('<section class="descarga">') < pagina.index('<ol id="lista">')
     assert 'href="datos/votaciones.csv"' in pagina and 'href="datos/votaciones.json"' in pagina
     assert CITA_NUESTRA in pagina and "CC BY-SA 4.0" in pagina
     assert "CC BY 4.0" in pagina  # la de los temas

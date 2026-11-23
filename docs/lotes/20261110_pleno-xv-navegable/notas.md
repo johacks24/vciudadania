@@ -403,6 +403,27 @@ ser la versión actual):
   (desplegada, validada y pública). Siguiente: cooldown — revisar
   `docs/aprender.md` y `docs/apuestas.md` y moldear la siguiente apuesta.
 
+## 23/11/2026 · Corrección de producción (post-cierre): descarga visible
+
+Dirección del humano nada más usar la producción: **la descarga debe ir al nivel
+del buscador o justo debajo, seguro antes de la lista** — con scroll infinito de
+2.175 elementos, «Descarga los datos» al final de la página no se ve y el
+recorrido 4 queda inaccesible sin conocer la URL.
+
+- **Decisión de proceso del humano:** fix directo con entrada aquí (el lote está
+  cerrado; se asume como corrección de producción de la apuesta «Pleno XV
+  navegable», no como tarea nueva con brief).
+- **Cambio:** la sección pasa de después de `#centinela` a **justo antes de
+  `<ol id="lista">`** (tras la nota del buscador, sin separar el contador de su
+  búsqueda), tal cual, sin rediseño; CSS: `margin:12px 0 20px` en vez del
+  `margin-top:40px` de «final de página». Todo en el generador
+  (`exportar_portada.py`): la portada no se edita a mano.
+- **Regresión protegida:** el test de la portada (D.1) aserta ahora el ORDEN
+  (sección antes que la lista), no solo la presencia — la dirección de diseño
+  queda en la suite (44/44).
+- **Determinismo re-verificado:** al regenerar con `make web` solo cambia
+  `web/index.html`; fichas, índice y dataset byte-idénticos.
+
 
 
 

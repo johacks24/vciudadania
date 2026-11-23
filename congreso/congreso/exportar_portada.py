@@ -61,7 +61,7 @@ h1{font-size:22px;margin:0 0 4px}
 #lista .titulo{display:block;font-size:15px;line-height:1.45;margin:2px 0}
 #lista .recuento{display:block;font-size:13px;color:#555}
 #centinela{padding:28px 0;color:#555;font-size:13px;text-align:center}
-.descarga{margin-top:40px;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+.descarga{margin:12px 0 20px;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
 .descarga h2{font-size:16px;margin:0 0 8px;color:#555;font-weight:600}
 .descarga ul{margin:8px 0;padding-left:20px}
 .descarga li{margin:4px 0}
@@ -110,10 +110,6 @@ contra los totales oficiales. Se listan de la más reciente a la más antigua.</
 <p id="contador" aria-live="polite">{n} votaciones</p>
 <p class="nota">La búsqueda necesita JavaScript. El filtro compara recuentos: no dice
 si la iniciativa quedó aprobada, porque algunas mayorías son cualificadas.</p>
-<ol id="lista">
-{items}
-</ol>
-<p id="centinela">Cargando más votaciones…</p>
 <section class="descarga">
 <h2>Descarga los datos</h2>
 <p>Toda la legislatura ({n} votaciones) con su cita:</p>
@@ -125,6 +121,10 @@ enlace a su registro oficial</li>
 <p class="cita">Cita: {cita} · CC BY-SA 4.0. Temas: {cita_temas} · CC BY 4.0.</p>
 <p class="nota">Cómo se hace y sus límites: <a href="https://github.com/johacks24/vciudadania/blob/main/docs/metodo/metodo.md">docs/metodo/metodo.md</a>.</p>
 </section>
+<ol id="lista">
+{items}
+</ol>
+<p id="centinela">Cargando más votaciones…</p>
 <script>
 (function () {{
   var ESTATICOS = {n_estaticos}, LOTE = {por_lote}, PAUSA = {antirrebote};
